@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "0c3397c1-3b44-4f5c-a014-16c2204b89f5",
+		"name": "BlogPostEntityAPIv2",
+		"description": "All the collected examples that were shown within the blog post on the entity API release v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Fetch the list of all entityTypes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Token {{secret}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{environment}}/api/v2/entityTypes",
+					"host": [
+						"{{environment}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"entityTypes"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Endpoint used to fetch all the entity type schemata "
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch the schema of a process",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Api-Token {{secret}}"
+					}
+				],
+				"url": {
+					"raw": "{{environment}}/api/v2/entityTypes/PROCESS_GROUP_INSTANCE",
+					"host": [
+						"{{environment}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"entityTypes",
+						"PROCESS_GROUP_INSTANCE"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Endpoint used to fetch a single type schema"
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a list of all monitored processes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Api-Token {{secret}}"
+					}
+				],
+				"url": {
+					"raw": "{{environment}}/api/v2/entities?entitySelector=type(PROCESS_GROUP_INSTANCE),mz(Easytravel),tag(loadtest),entityName(easy)",
+					"host": [
+						"{{environment}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "entitySelector",
+							"value": "type(PROCESS_GROUP_INSTANCE),mz(Easytravel),tag(loadtest),entityName(easy)"
+						},
+						{
+							"key": "Authorization",
+							"value": "",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Endpoint used to fetch all monitored processes"
+			},
+			"response": []
+		},
+		{
+			"name": "Control the result with fields parameter",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Api-Token {{secret}}"
+					}
+				],
+				"url": {
+					"raw": "{{environment}}/api/v2/entities?entitySelector=type(PROCESS_GROUP_INSTANCE),mz(Easytravel),tag(loadtest),entityName(easy)&fields=+tags,+properties.appVersion",
+					"host": [
+						"{{environment}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "entitySelector",
+							"value": "type(PROCESS_GROUP_INSTANCE),mz(Easytravel),tag(loadtest),entityName(easy)"
+						},
+						{
+							"key": "Authorization",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "fields",
+							"value": "+tags,+properties.appVersion"
+						}
+					]
+				},
+				"description": "Control the result with fields parameter"
+			},
+			"response": []
+		},
+		{
+			"name": "Query through relationships",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Api-Token {{secret}}"
+					}
+				],
+				"url": {
+					"raw": "{{environment}}/api/v2/entities?fields=+tags,+properties.appVersion&entitySelector=type(PROCESS_GROUP_INSTANCE),toRelationship.isProcessOf(type(HOST),entityName(HOST-IG-1-100010))",
+					"host": [
+						"{{environment}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "fields",
+							"value": "+tags,+properties.appVersion"
+						},
+						{
+							"key": "entitySelector",
+							"value": "type(PROCESS_GROUP_INSTANCE),toRelationship.isProcessOf(type(HOST),entityName(HOST-IG-1-100010))"
+						}
+					]
+				},
+				"description": "Use an entities relationship within a query"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ec36d325-e193-4291-89b8-cb1124d1746b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "991d03ed-8c59-469d-b8b1-73ec56e0515a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0d66d979-ad4d-4f0b-a5ef-de3fc7d27241",
+			"key": "environment",
+			"value": "<YOUR_ENV_URL>\n",
+			"type": "string"
+		},
+		{
+			"id": "540608fc-345b-45ad-8e1e-d3f77193b00b",
+			"key": "secret",
+			"value": "<YOUR_API_TOKEN>",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
