@@ -2,6 +2,7 @@
 
 This self-contained example explains how to set up topology extraction configurations in order to automatically extract vertical and horizontal topology 
 through a multi-dimensional metric data stream.
+
 This example contains:
 - A [load generator](freetrace-demo-datagenerator.py) that sends two metrics (demo.service.requestcount and demo.service.responsetime)
 - A [Dynatrace Extension 2.0 yaml](extension.yaml) file that contains all necessary declarative extraction rules to generate a dynamic service topology, as it is shown below. 
