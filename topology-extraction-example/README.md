@@ -16,7 +16,9 @@ Within this example three entity types are automatically extracted, that are: ft
 ## Load generator
 
 A self-contained Python script that sends two metrics with random mesurements into a Dynatrace monitoring environment. 
-**How to run**
+
+### How to run the load generator
+
 - Replace the API token with your own Dynatrace APIv2 access token that has the metric ingest scope enabled.
 - Replace the Dynatrace API URL with your own monitoring environment domain. 
 - Finally schedule this load generator Python script to run every minute by using a cron-job to receive a continous random metric stream.
