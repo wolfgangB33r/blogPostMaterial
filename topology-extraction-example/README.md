@@ -4,7 +4,7 @@ This self-contained example explains how to set up topology extraction configura
 through a multi-dimensional metric data stream.
 This example contains:
 - A [load generator](freetrace-demo-datagenerator.py) that sends two metrics (demo.service.requestcount and demo.service.responsetime)
-- A Dynatrace extension 2.0 yaml file that contains all necessary declarative extraction rules to generate a dynamic service topology, as it is shown below. 
+- A [Dynatrace Extension 2.0 yaml](extension.yaml) file that contains all necessary declarative extraction rules to generate a dynamic service topology, as it is shown below. 
 
 ## Topology definition
 
@@ -12,6 +12,13 @@ The below figure shows the topology that this example is able to dynamically gen
 Within this example three entity types are automatically extracted, that are: ftrace:service, ftrace:process and ftrace:host.
 
 ![Topology](topology.png)
+
+## Dynatrace Extension 2.0
+
+To simplify the creation of those 3 different entity types along with their relationships, the newly introduced Dynatrace Extension 2.0 framework can be used.
+Just pack the extension.yaml file into a zip structure and upload it into your Dynatrace Hub, as shown below:
+
+![Hub](dynatrace_hub.png)
 
 ## Load generator
 
