@@ -23,7 +23,7 @@ Just pack the extension.yaml file into a zip structure and upload it into your D
 
 ## Load generator
 
-A self-contained Python script that sends two metrics with random mesurements into a Dynatrace monitoring environment. 
+A self-contained Python script that sends two metrics with random measurements into your Dynatrace monitoring environment. 
 
 ### How to run the load generator
 
