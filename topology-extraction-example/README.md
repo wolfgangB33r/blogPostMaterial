@@ -11,7 +11,7 @@ This example contains:
 The below figure shows the topology that this example is able to dynamically generate within Dynatrace. Client services are calling backend services through a 'calls' relationship. Each service runs on a process that is defined through its port, process name and host IP. The processes are running on hosts that are given by their IPs. 
 Within this example three entity types are automatically extracted, that are: ftrace:service, ftrace:process and ftrace:host.
 
-![Topology](topology.jpg)
+![Topology](topology.png)
 
 ## Load generator
 
