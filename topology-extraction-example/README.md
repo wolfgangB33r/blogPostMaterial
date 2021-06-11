@@ -15,7 +15,7 @@ Within this example three entity types are automatically extracted, that are: ft
 
 ## Dynatrace Extension 2.0
 
-To simplify the creation of those 3 different entity types along with their relationships, the newly introduced Dynatrace Extension 2.0 framework can be used.
+To simplify the creation of those 3 different entity types along with their relationships, the newly introduced [Dynatrace Extension 2.0 framework](https://www.dynatrace.com/support/help/extend-dynatrace/extensions20/) can be used.
 Just pack the extension.yaml file into a zip structure and upload it into your Dynatrace Hub, as shown below:
 
 ![Hub](dynatrace_hub.png)
