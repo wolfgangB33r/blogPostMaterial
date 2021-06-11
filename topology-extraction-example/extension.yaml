@@ -1,0 +1,95 @@
+name: "freetrace"
+version: "1.0.0"
+minDynatraceVersion: "1.218"
+author:
+  name: "Wolfgang Beer"
+  
+topology:
+  types:
+  - name: "ftrace:service"
+    displayName: "Service"
+    rules:
+    - idPattern: "{srv_ip}{srv_port}{srv_service}"
+      instanceNamePattern: "{srv_service}"
+      role: callee
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+    - idPattern: "{cl_ip}{cl_port}{cl_service}"
+      instanceNamePattern: "{cl_service}"
+      role: caller
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+  - name: "ftrace:process"
+    displayName: "Process"
+    rules:
+    - idPattern: "{srv_ip}{srv_port}"
+      instanceNamePattern: "{srv_processname}"
+      role: callee
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+    - idPattern: "{cl_ip}{cl_port}"
+      instanceNamePattern: "{cl_processname}"
+      role: caller
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+  - name: "ftrace:host"
+    displayName: "Host"
+    rules:
+    - idPattern: "{srv_ip}"
+      instanceNamePattern: "{srv_ip}"
+      role: callee
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+    - idPattern: "{cl_ip}"
+      instanceNamePattern: "{cl_ip}"
+      role: caller
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(demo.service)"
+
+  relationships:
+  - fromType: "ftrace:service"
+    fromRole: "caller"
+    typeOfRelation: "RUNS_ON"
+    toType: "ftrace:process"
+    toRole: "caller"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(demo.service)"
+  - fromType: "ftrace:process"
+    fromRole: "caller"
+    typeOfRelation: "RUNS_ON"
+    toType: "ftrace:host"
+    toRole: "caller"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(demo.service)"      
+  - fromType: "ftrace:service"
+    fromRole: "callee"
+    typeOfRelation: "RUNS_ON"
+    toType: "ftrace:process"
+    toRole: "callee"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(demo.service)"
+  - fromType: "ftrace:process"
+    fromRole: "callee"
+    typeOfRelation: "RUNS_ON"
+    toType: "ftrace:host"
+    toRole: "callee"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(demo.service)"
+  - fromType: "ftrace:service"
+    fromRole: "caller"
+    typeOfRelation: "CALLS"
+    toType: "ftrace:service"
+    toRole: "callee"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(demo.service)"
