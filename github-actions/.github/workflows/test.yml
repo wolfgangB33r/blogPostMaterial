@@ -1,0 +1,26 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  workflow_dispatch:
+
+jobs:
+  
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify Dynatrace on a new release
+      uses: dynatrace-oss/dynatrace-github-action@v6
+      with:
+        url: '${{ secrets.DT_URL }}'
+        token: '${{ secrets.DT_TOKEN }}'
+        events: |
+          - title: "TabShop Release"
+            type: CUSTOM_INFO
+            description: "Branch ${{ github.ref }} release build pushed to Google Play"
+            source: GitHub
+            entities:
+              - MOBILE_APPLICATION-C061BED4799B41C5
+            dimensions:
+              project: "${{ github.repository }}"
+              branch: "${{ github.ref }}"
+              event: "${{ github.event_name }}"
+              owner: ${{ github.repository_owner }}   
