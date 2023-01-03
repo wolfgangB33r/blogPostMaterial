@@ -1,0 +1,10 @@
+### Send a request
+GET http://localhost:8080/
+
+
+### Change config
+POST http://localhost:8080/config
+
+{
+    "Redirect" : true
+}

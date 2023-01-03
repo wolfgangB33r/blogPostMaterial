@@ -1,0 +1,46 @@
+# This is a demo workflow that sends events and metrics to a configured Dynatrace endvironment.
+
+name: Observe repository workflow
+
+# Controls when the workflow will run 
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "observe"
+  observe:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - run: echo $EVENT
+        env:
+          EVENT: ${{ tojson(github.event) }})
+      - name: Inform Dynatrace about a successful build (metric + event)
+        uses: dynatrace-oss/dynatrace-github-action@v8
+        with:
+          url: '${{ secrets.DT_URL }}'
+          token: '${{ secrets.DT_TOKEN }}'
+          events: |
+            - title: "${{ github.event.head_commit.message }}" 
+              type: CUSTOM_INFO
+              properties:
+                source: GitHub
+                message: "${{ github.event.head_commit.message }}" 
+                dt.event.group_label: commits
+                event_name: "${{ github.event_name }}"
+                repo_id : "${{ github.event.repository.id }}"
+                repo_name : "${{ github.event.repository.name }}"
+                repo_url : "${{ github.event.repository.url }}"
+                dt.event.allow_entity_remapping : true
+                dt.event.preferred_entity_type : "github:repository"
+                

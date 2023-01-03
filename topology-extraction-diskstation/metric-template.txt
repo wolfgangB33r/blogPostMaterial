@@ -1,0 +1,47 @@
+telegraf.snmp.ssCpuUser,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" #cpu_user#
+telegraf.snmp.memTotalSwap,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 3221428
+telegraf.snmp.memAvailSwap,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 2329228
+telegraf.snmp.memTotalReal,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1871684
+telegraf.snmp.temperature,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 40
+telegraf.snmp.powerStatus,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.snmp.memTotalFree,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 2446904
+telegraf.snmp.systemStatus,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.snmp.systemFanStatus,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.snmp.ssCpuIdle,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" #cpu_idle#
+telegraf.snmp.ssCpuSystem,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" #cpu_system#
+telegraf.snmp.upgradeAvailable,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 2
+telegraf.snmp.memAvailReal,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" #mem_available#
+telegraf.snmp.cpuFanStatus,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.ifTable.ifOutNUcastPkts,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifOperStatus,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.ifTable.ifInDiscards,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifOutOctets,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1573490034
+telegraf.ifTable.ifMtu,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1500
+telegraf.ifTable.ifInNUcastPkts,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 646524
+telegraf.ifTable.ifInErrors,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifOutUcastPkts,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 484053083
+telegraf.ifTable.ifOutQLen,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifOutDiscards,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifSpeed,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1000000000
+telegraf.ifTable.ifInOctets,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 4135270886
+telegraf.ifTable.ifOutErrors,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifInUnknownProtos,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.ifTable.ifAdminStatus,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1
+telegraf.ifTable.ifInUcastPkts,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1086363271
+telegraf.ifTable.ifType,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 6
+telegraf.ifTable.ifLastChange,agent_host="#ip#",host="#host#",ifdescr="eth0",ifindex="3",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.hrStorageTable.hrStorageAllocationUnits,agent_host="#ip#",host="#host#",hrstoragedescr="/tmp",hrstorageindex="49",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 4096
+telegraf.hrStorageTable.hrStorageSize,agent_host="#ip#",host="#host#",hrstoragedescr="/tmp",hrstorageindex="49",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 233960
+telegraf.hrStorageTable.hrStorageUsed,agent_host="#ip#",host="#host#",hrstoragedescr="/tmp",hrstorageindex="49",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 564
+telegraf.hrStorageTable.hrStorageAllocationUnits,agent_host="#ip#",host="#host#",hrstoragedescr="/volumeUSB1/usbshare",hrstorageindex="55",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 32768
+telegraf.hrStorageTable.hrStorageSize,agent_host="#ip#",host="#host#",hrstoragedescr="/volumeUSB1/usbshare",hrstorageindex="55",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 15258355
+telegraf.hrStorageTable.hrStorageUsed,agent_host="#ip#",host="#host#",hrstoragedescr="/volumeUSB1/usbshare",hrstorageindex="55",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 2746927
+telegraf.hrStorageTable.hrStorageAllocationUnits,agent_host="#ip#",host="#host#",hrstoragedescr="Memory buffers",hrstorageindex="6",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1024
+telegraf.hrStorageTable.hrStorageSize,agent_host="#ip#",host="#host#",hrstoragedescr="Memory buffers",hrstorageindex="6",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1871684
+telegraf.hrStorageTable.hrStorageUsed,agent_host="#ip#",host="#host#",hrstoragedescr="Memory buffers",hrstorageindex="6",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 18796
+telegraf.hrStorageTable.hrStorageUsed,agent_host="#ip#",host="#host#",hrstoragedescr="/",hrstorageindex="31",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 320060
+telegraf.hrStorageTable.hrStorageAllocationUnits,agent_host="#ip#",host="#host#",hrstoragedescr="/",hrstorageindex="31",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 4096
+telegraf.hrStorageTable.hrStorageSize,agent_host="#ip#",host="#host#",hrstoragedescr="/",hrstorageindex="31",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 596382
+telegraf.laTable.serviceUsersTELNET,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.laTable.serviceUsersSFTP,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 0
+telegraf.laTable.serviceUsersHTTP,agent_host="#ip#",host="#host#",modelname="DS218+",serialnumber="#serialnumber#",sysname="#sysname#",version="DSM 7.0-41890" 1

@@ -1,0 +1,28 @@
+<?php
+
+function load_adverts($post)
+{
+	// send request statistic to Dynatrace
+
+	$url = 'https://xx.live.dynatrace.com/api/v2/metrics/ingest';
+	
+	$options = array(
+		'http' => array(
+			'header'  => "Content-type: text/plain\r\nAuthorization: Api-Token ???\r\n",
+			'method'  => 'POST',
+			'content' => 'smartlab.traffic,postid=' . $post->ID . ',clientip=' . getenv("REMOTE_ADDR") . ' 1'
+		)
+	);
+	$context  = stream_context_create($options);
+	$result = file_get_contents($url, false, $context);
+
+	$gallery_ad = "
+	<a href='https://www.amazon.com/-/en/Wolfgang-Beer-ebook/dp/B08JJ5PYQJ' target='_'><img src='https://www.smartlab.at/wp-content/uploads/2022/12/ad_ebook_hass.png' width='175px' alt='Home Automation eBook' class='wp-image-9863'/></a>
+	<a href='https://www.amazon.com/dp/B0924XRXDX' target='_'><img src='https://www.smartlab.at/wp-content/uploads/2022/12/ad_ai_ebook.png' width='175px' alt='Applied Artificial Intelligence eBook' class='wp-image-9863'/></a>
+	<a href='https://www.amazon.com/dp/B01N13QFOK' target='_'><img src='https://www.smartlab.at/wp-content/uploads/2022/12/ad_ebook_crypto.png' width='175px' alt='Cryptocurrency Blockchain Bitcoin ebook eBook' class='wp-image-9863'/></a>
+	<a href='https://tabshop.smartlab.at' target='_'><img src='https://www.smartlab.at/wp-content/uploads/2022/12/ad_tabshop.png' width='175px' alt='TabShop Android Point of Sale (POS)' class='wp-image-9863'/></a>
+	";
+
+	return $gallery_ad;
+}
+?>

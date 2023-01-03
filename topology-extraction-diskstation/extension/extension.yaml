@@ -1,0 +1,141 @@
+name: "custom:synology"
+version: "1.0.0"
+minDynatraceVersion: "1.226"
+author:
+  name: "Wolfgang Beer"
+
+# Definition of the custom topology, based on the sent in Telegraf metric
+topology:
+  types:
+    # The main diskmanager network device
+  - name: "syn:diskmanager"
+    displayName: "Synology Diskmanager"
+    rules:
+    - idPattern: "{serialnumber}"
+      instanceNamePattern: "{sysname}"
+      # Choose an icon from https://barista.dynatrace.com/resources/icons
+      iconPattern: server
+      sources:
+        - sourceType: "Metrics"
+          condition: "$prefix(telegraf.snmp)"
+        - sourceType: "Metrics"
+          condition: "$prefix(telegraf.ifTable)"
+        - sourceType: "Metrics"
+          condition: "$prefix(telegraf.hrStorageTable)"
+        - sourceType: "Metrics"
+          condition: "$prefix(telegraf.laTable)"
+      attributes:
+        - key: "sysname"
+          displayName: "System name"
+          pattern: "{sysname}"
+        - key: "serialnumber"
+          displayName: "Serialnumber"
+          pattern: "{serialnumber}"
+        - key: "version"
+          displayName: "Version"
+          pattern: "{version}"
+        - key: "model"
+          displayName: "Model"
+          pattern: "{model}"
+        - key: "agenthost"
+          displayName: "Agent host"
+          pattern: "{agent_host}"
+        - key: "host"
+          displayName: "Host"
+          pattern: "{host}"
+
+    # All the individual mapped drives on that diskmanager
+  - name: "syn:disk"
+    displayName: "Synology Disk"
+    rules:
+    - idPattern: "{serialnumber}{hrstoragedescr}"
+      instanceNamePattern: "{hrstoragedescr}"
+      # Choose an icon from https://barista.dynatrace.com/resources/icons
+      iconPattern: hdd-discdrive
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(telegraf.hrStorageTable)"
+      attributes:
+      - key: "hrstoragedescr"
+        displayName: "Storage descriptor"
+        pattern: "{hrstoragedescr}"
+      - key: "storageindex"
+        displayName: "Storage index"
+        pattern: "{hrstorageindex}"
+      - key: "sysname"
+        displayName: "System name"
+        pattern: "{sysname}"
+      - key: "serialnumber"
+        displayName: "Serialnumber"
+        pattern: "{serialnumber}"
+      - key: "version"
+        displayName: "Version"
+        pattern: "{version}"
+      - key: "model"
+        displayName: "Model"
+        pattern: "{model}"
+      - key: "agenthost"
+        displayName: "Agent host"
+        pattern: "{agent_host}"
+      - key: "host"
+        displayName: "Host"
+        pattern: "{host}"
+
+  relationships:
+  - fromType: "syn:disk"
+    typeOfRelation: "RUNS_ON"
+    toType: "syn:diskmanager"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(telegraf.hrStorageTable)"
+
+# All the screen definitions and layouts, used to present the topology along with its data
+screens:
+  - entityType: syn:diskmanager
+    listSettings:
+      staticContent:
+        showGlobalFilter: true
+        header:
+          title: "Synology Diskmanagers"
+          description: "This pages shows all monitored Synology Diskmanagers"
+          icon: server
+      layout:
+        autoGenerate: true
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - key: cpu_mem
+            type: CHART_GROUP
+          - key: disks
+            type: ENTITIES_LIST
+    chartsCards:
+      - key: cpu_mem
+        displayName: "CPU and Memory"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: CPU
+            metrics:
+              - metricSelector: telegraf.snmp.ssCpuIdle
+              - metricSelector: telegraf.snmp.ssCpuSystem
+              - metricSelector: telegraf.snmp.ssCpuUser
+          - displayName: Memory
+            metrics:
+              - metricSelector: telegraf.snmp.memTotalFree
+    entitiesListCards:
+      - key: disks
+        displayName: Synology disks
+        pageSize: 10
+        displayCharts: false
+        entitySelectorTemplate: "type(syn:disk),fromRelationships.runsOn($(entityConditions))"
+        displayIcons: true
+        enableDetailsExpandability: true
+        numberOfVisibleCharts: 2
+            
+  
