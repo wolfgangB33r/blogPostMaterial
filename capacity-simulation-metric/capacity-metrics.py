@@ -15,8 +15,8 @@ def genSeries():
     # Free disk space in percent
     mStr = "host.disk.free,hostname=prod-useast-01,diskname=c " + str(level_1 + random.randint(0, 5)) + "\n"
     mStr += "host.disk.free,hostname=prod-useast-01,diskname=mnt " + str(10) + "\n"
-    mStr += "host.disk.free,hostname=prod-sidney-05,diskname=/ " + str(level_2 + random.randint(0, 3)) + "\n"
-    mStr += "host.disk.free,hostname=prod-sidney-05,diskname=/root " + str(40) + "\n"
+    mStr += "host.disk.free,hostname=prod-sydney-05,diskname=/ " + str(level_2 + random.randint(0, 3)) + "\n"
+    mStr += "host.disk.free,hostname=prod-sydney-05,diskname=/root " + str(40) + "\n"
     return mStr
 
 payload = genSeries()
