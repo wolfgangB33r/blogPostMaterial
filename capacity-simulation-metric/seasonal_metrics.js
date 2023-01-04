@@ -6,7 +6,7 @@ import { metricsClient } from '@dynatrace-sdk/client-classic-environment-v2';
 const METRIC_NAME_PREFIX = "sim.seasonal" 
 const PERIODS_MIN = [15, 60, 6 * 60, 24 * 60]
 const NOISE_LEVEL = [0, 1, 2, 3, 5]
-
+ 
 function rand(min, max) {
   return Math.floor(min + Math.random()*(max - min + 1))
 }
@@ -23,9 +23,8 @@ export default async function({execution_id}) {
 
   for (let p = 0; p < PERIODS_MIN.length; p++) {
     for (let n = 0; n < NOISE_LEVEL.length; n++) {
-      var mkey = "_" + NOISE_LEVEL[n] + "_" + PERIODS_MIN[p];
       var value = seasonal_generator(PERIODS_MIN[p], NOISE_LEVEL[n], minutes);
-      metricBody += METRIC_NAME_PREFIX + mkey + ",key1=value1 " + value + "\n";
+      metricBody += METRIC_NAME_PREFIX + ",period_minutes=" + PERIODS_MIN[p] + ",noise=" + NOISE_LEVEL[n] + " " + value + "\n";
     }
   }
   console.log(metricBody);
