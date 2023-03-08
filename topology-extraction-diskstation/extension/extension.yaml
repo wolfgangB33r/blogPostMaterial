@@ -121,12 +121,22 @@ screens:
         numberOfVisibleCharts: 2
         charts:
           - displayName: CPU
-            metrics:
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
               - metricSelector: telegraf.snmp.ssCpuIdle
               - metricSelector: telegraf.snmp.ssCpuSystem
               - metricSelector: telegraf.snmp.ssCpuUser
           - displayName: Memory
-            metrics:
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
               - metricSelector: telegraf.snmp.memTotalFree
     entitiesListCards:
       - key: disks
