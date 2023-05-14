@@ -1,0 +1,179 @@
+name: com.dynatrace.openai
+version: 1.0.0
+minDynatraceVersion: "1.238"
+author:
+  name: Wolfgang Beer
+
+# Definition of the custom topology, based on the sent OpenAI metric
+topology:
+  types:
+    # The main OpenAI generative AI cloud service
+  - name: "openai:llm.model"
+    displayName: "OpenAI"
+    rules:
+    - idPattern: "{serialnumber}"
+      instanceNamePattern: "{sysname}"
+      # Choose an icon from https://barista.dynatrace.com/resources/icons
+      iconPattern: hyperlyzer
+      sources:
+        - sourceType: "Metrics"
+          condition: "$prefix(openai.)"
+      attributes:
+        - key: "sysname"
+          displayName: "System name"
+          pattern: "{sysname}"
+        - key: "serialnumber"
+          displayName: "Serialnumber"
+          pattern: "{serialnumber}"
+        - key: "version"
+          displayName: "Version"
+          pattern: "{version}"
+        - key: "model"
+          displayName: "Model"
+          pattern: "{model}"
+        - key: "agenthost"
+          displayName: "Agent host"
+          pattern: "{agent_host}"
+        - key: "host"
+          displayName: "Host"
+          pattern: "{host}"
+
+    # All the individual mapped drives on that diskmanager
+  - name: "syn:disk"
+    displayName: "Synology Disk"
+    rules:
+    - idPattern: "{serialnumber}{hrstoragedescr}"
+      instanceNamePattern: "{hrstoragedescr}"
+      # Choose an icon from https://barista.dynatrace.com/resources/icons
+      iconPattern: hdd-discdrive
+      sources:
+      - sourceType: "Metrics"
+        condition: "$prefix(telegraf.hrStorageTable)"
+      attributes:
+      - key: "hrstoragedescr"
+        displayName: "Storage descriptor"
+        pattern: "{hrstoragedescr}"
+      - key: "storageindex"
+        displayName: "Storage index"
+        pattern: "{hrstorageindex}"
+      - key: "sysname"
+        displayName: "System name"
+        pattern: "{sysname}"
+      - key: "serialnumber"
+        displayName: "Serialnumber"
+        pattern: "{serialnumber}"
+      - key: "version"
+        displayName: "Version"
+        pattern: "{version}"
+      - key: "model"
+        displayName: "Model"
+        pattern: "{model}"
+      - key: "agenthost"
+        displayName: "Agent host"
+        pattern: "{agent_host}"
+      - key: "host"
+        displayName: "Host"
+        pattern: "{host}"
+
+  relationships:
+  - fromType: "syn:disk"
+    typeOfRelation: "RUNS_ON"
+    toType: "syn:diskmanager"
+    sources:
+    - sourceType: "Metrics"
+      condition: "$prefix(telegraf.hrStorageTable)"
+
+# All the screen definitions and layouts, used to present the topology along with its data
+screens:
+  - entityType: openai:llm.model
+    listSettings:
+      staticContent:
+        showGlobalFilter: true
+        header:
+          title: "Open"
+          description: "This pages shows all monitored Synology Diskmanagers"
+          icon: server
+      layout:
+        autoGenerate: true
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - key: cpu_mem
+            type: CHART_GROUP
+          - key: disks
+            type: ENTITIES_LIST
+    chartsCards:
+      - key: cpu_mem
+        displayName: "CPU and Memory"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: CPU
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: telegraf.snmp.ssCpuIdle
+              - metricSelector: telegraf.snmp.ssCpuSystem
+              - metricSelector: telegraf.snmp.ssCpuUser
+          - displayName: Memory
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: telegraf.snmp.memTotalFree
+    entitiesListCards:
+      - key: disks
+        displayName: Synology disks
+        pageSize: 10
+        displayCharts: false
+        entitySelectorTemplate: "type(syn:disk),fromRelationships.runsOn($(entityConditions))"
+        displayIcons: true
+        enableDetailsExpandability: true
+        numberOfVisibleCharts: 2
+            
+
+
+
+chartsCards:
+      - key: openai_token_consumption
+        displayName: "OpenAI Token Consumption"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Prompt Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.promt_token_count.gauge
+          - displayName: Completion Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.completion_token_count.gaugee
+          - displayName: Total Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.total_token_count.gauge
+    
+
+  

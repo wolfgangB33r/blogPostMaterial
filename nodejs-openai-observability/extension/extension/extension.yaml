@@ -1,0 +1,98 @@
+name: custom:com.dynatrace.openai
+version: 0.0.4
+minDynatraceVersion: "1.265.0"
+author:
+  name: Wolfgang Beer
+
+topology:
+  types:
+    - enabled: true
+      name: "openai:model"
+      displayName: "OpenAI Generative Model Service"
+      rules:
+        - idPattern: "{model}"
+          instanceNamePattern: "{model}"
+          iconPattern: hyperlyzer
+          sources:
+            - sourceType: Metrics
+              condition: "$prefix(openai.)"
+          role: default
+          attributes:
+            - key: "model"
+              displayName: "OpenAI model"
+              pattern: "{model}"
+            - key: "clientHost"
+              displayName: "Client host"
+              pattern: "{dt.entity.host}"
+            - key: dt.dns_names
+              displayName: DNS Name
+              pattern: "api.openai.com"
+            - key: dt.dns_names
+              displayName: DNS Name
+              pattern: "api.openai.com"
+            - key: dt.listen_ports
+              displayName: Port
+              pattern: "443"
+
+screens:
+  - entityType: "openai:model"
+    listSettings:
+      staticContent:
+        showGlobalFilter: true
+        header:
+          title: "OpenAI Models"
+          description: "This pages shows all monitored OpenAI generative AI services"
+          icon: hyperlyzer
+        hideDefaultBreadcrumb: true
+        breadcrumbs:
+          - type: ENTITY_REF
+            entitySelectorTemplate: type(openai:model)
+            
+      layout:
+        autoGenerate: true
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: true
+        
+        
+          
+    chartsCards:
+      - key: openai_token_consumption
+        displayName: "OpenAI Token Consumption"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Prompt Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.promt_token_count.gauge:splitBy()
+          - displayName: Completion Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.completion_token_count.gauge:splitBy()
+          - displayName: Total Tokens 
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+              - metricSelector: openai.total_token_count.gauge:splitBy()
+
+    
+    
+
+  
