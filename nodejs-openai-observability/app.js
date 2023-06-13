@@ -16,7 +16,7 @@ function log_response(openai_response) {
   const completion_tokens = openai_response.usage.completion_tokens;
   const total_tokens = openai_response.usage.total_tokens;
   const timestamp = (new Date()).toISOString();
-  console.log(`[${(new Date()).toISOString()}] INFO: OpenAI response promt_tokens:${promt_tokens} completion_tokens: ${completion_tokens} total_tokens: ${total_tokens}`);
+  console.log(`[${(new Date()).toISOString()}] INFO: OpenAI response promt_tokens:${promt_tokens} completion_tokens:${completion_tokens} total_tokens:${total_tokens}`);
 }
 
 function report_metric(openai_response) {
@@ -55,6 +55,7 @@ const server = http.createServer(async (req, res) => {
       });
       const completion = response.data.choices[0].text;
       report_metric(response.data);
+      // log completion
       log_response(response.data);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
