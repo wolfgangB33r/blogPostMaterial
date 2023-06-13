@@ -9,13 +9,20 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const hostname = '127.0.0.1';
-const port = 8080;
+const port = 8090;
+
+function log_response(openai_response) {
+  const promt_tokens = openai_response.usage.prompt_tokens;
+  const completion_tokens = openai_response.usage.completion_tokens;
+  const total_tokens = openai_response.usage.total_tokens;
+  const timestamp = (new Date()).toISOString();
+  console.log(`[${(new Date()).toISOString()}] INFO: OpenAI response promt_tokens:${promt_tokens} completion_tokens: ${completion_tokens} total_tokens: ${total_tokens}`);
+}
 
 function report_metric(openai_response) {
   var post_data = "openai.promt_token_count,model=" + openai_response.model + " " + openai_response.usage.prompt_tokens + "\n";
   post_data += "openai.completion_token_count,model=" + openai_response.model + " " + openai_response.usage.completion_tokens + "\n";
   post_data += "openai.total_token_count,model=" + openai_response.model + " " + openai_response.usage.total_tokens + "\n";
-  console.log(post_data);
   var post_options = {
     host: 'localhost',
     port: '14499',
@@ -26,7 +33,9 @@ function report_metric(openai_response) {
       'Content-Length': Buffer.byteLength(post_data)
     }
   };
-  var metric_req = http.request(post_options, (resp) => {}).on("error", (err) => { console.log(err); });
+  var metric_req = http.request(post_options, (resp) => {}).on("error", (err) => { 
+    console.log(`[${(new Date()).toISOString()}] ERROR: OpenAI error ${err}`);
+  });
   metric_req.write(post_data);
   metric_req.end();
 }
@@ -34,7 +43,7 @@ function report_metric(openai_response) {
 const server = http.createServer(async (req, res) => {
   var params = url.parse(req.url, true).query;
   
-  console.log(url.parse(req.url, true).pathname);
+  console.log(`[${(new Date()).toISOString()}] INFO: ${url.parse(req.url, true).pathname}`);
     
   if (url.parse(req.url, true).pathname == '/' && params.prompt) {
     try {
@@ -44,9 +53,9 @@ const server = http.createServer(async (req, res) => {
         temperature: 0,
         max_tokens: 10,
       });
-      console.log(response);
       const completion = response.data.choices[0].text;
       report_metric(response.data);
+      log_response(response.data);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
       res.end(completion);
@@ -63,5 +72,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`[${(new Date()).toISOString()}] INFO: Server running at http://${hostname}:${port}/`);
 });
