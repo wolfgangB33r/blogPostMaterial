@@ -2,8 +2,11 @@
 # callback receiver for AI Observability.
 import tensorflow as tf
 print("TensorFlow version:", tf.__version__)
-
 import time
+import os
+
+DT_URL = os.environ['DT_ENV']
+DT_API_TOKEN = os.environ['DT_API_TOKEN']
 
 # load the Dynatrace callback receiver
 from dynatrace import DynatraceKerasCallback
@@ -31,7 +34,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 # define the tensor board callbacks
-dt_callback = DynatraceKerasCallback(metricprefix='tensorflow', modelname='mnist-classifier', url='https://<YOUR_ENV>.live.dynatrace.com/api/v2/metrics/ingest', apitoken='<YOUR_TOKEN>') 
+dt_callback = DynatraceKerasCallback(metricprefix='tensorflow', modelname='mnist-classifier', url=DT_URL + '/api/v2/metrics/ingest', apitoken=DT_API_TOKEN) 
 
 # train the model
 model.fit(x_train, y_train, epochs=5, callbacks=[dt_callback])
