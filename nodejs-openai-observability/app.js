@@ -2,6 +2,21 @@ const http = require('http');
 const https = require('https');
 var url = require('url');
 
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, prettyPrint } = format;
+
+const logger = createLogger({
+  level: 'info',
+  format: combine(
+    timestamp(),
+    prettyPrint()
+  ),
+  defaultMeta: { service: 'openai-client-service' },
+  transports: [
+    new transports.File({ filename: 'openai.log' }),
+  ],
+});
+
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
@@ -10,14 +25,6 @@ const openai = new OpenAIApi(configuration);
 
 const hostname = '127.0.0.1';
 const port = 8090;
-
-function log_response(openai_response) {
-  const promt_tokens = openai_response.usage.prompt_tokens;
-  const completion_tokens = openai_response.usage.completion_tokens;
-  const total_tokens = openai_response.usage.total_tokens;
-  const timestamp = (new Date()).toISOString();
-  console.log(`[${(new Date()).toISOString()}] INFO: OpenAI response promt_tokens:${promt_tokens} completion_tokens:${completion_tokens} total_tokens:${total_tokens}`);
-}
 
 function report_metric(openai_response) {
   var post_data = "openai.promt_token_count,model=" + openai_response.model + " " + openai_response.usage.prompt_tokens + "\n";
@@ -34,7 +41,7 @@ function report_metric(openai_response) {
     }
   };
   var metric_req = http.request(post_options, (resp) => {}).on("error", (err) => { 
-    console.log(`[${(new Date()).toISOString()}] ERROR: OpenAI error ${err}`);
+    logger.log('error', `OpenAI error ${err}`);
   });
   metric_req.write(post_data);
   metric_req.end();
@@ -42,9 +49,7 @@ function report_metric(openai_response) {
 
 const server = http.createServer(async (req, res) => {
   var params = url.parse(req.url, true).query;
-  
-  console.log(`[${(new Date()).toISOString()}] INFO: ${url.parse(req.url, true).pathname}`);
-    
+  logger.log('info', `endpoint called ${url.parse(req.url, true).pathname}`);
   if (url.parse(req.url, true).pathname == '/' && params.prompt) {
     try {
       const response = await openai.createCompletion({
@@ -56,7 +61,7 @@ const server = http.createServer(async (req, res) => {
       const completion = response.data.choices[0].text;
       report_metric(response.data);
       // log completion
-      log_response(response.data);
+      logger.log('info', `OpenAI response promt_tokens:${response.data.usage.prompt_tokens} completion_tokens:${response.data.usage.completion_tokens} total_tokens:${response.data.usage.total_tokens}`);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
       res.end(completion);
@@ -73,5 +78,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`[${(new Date()).toISOString()}] INFO: Server running at http://${hostname}:${port}/`);
+  logger.log('info', `Server running at http://${hostname}:${port}/`);
 });
