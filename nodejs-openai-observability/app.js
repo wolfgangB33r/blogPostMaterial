@@ -3,13 +3,13 @@ const https = require('https');
 var url = require('url');
 
 const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, prettyPrint } = format;
+const { combine, timestamp, label, json } = format;
 
 const logger = createLogger({
   level: 'info',
   format: combine(
     timestamp(),
-    prettyPrint()
+    json()
   ),
   defaultMeta: { service: 'openai-client-service' },
   transports: [

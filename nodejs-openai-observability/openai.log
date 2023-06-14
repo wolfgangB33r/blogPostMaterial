@@ -1,0 +1,9 @@
+{"level":"info","message":"Server running at http://127.0.0.1:8090/","service":"openai-client-service","timestamp":"2023-06-14T13:28:06.786Z"}
+{"level":"info","message":"endpoint called /","service":"openai-client-service","timestamp":"2023-06-14T13:28:26.611Z"}
+{"level":"info","message":"endpoint called /favicon.ico","service":"openai-client-service","timestamp":"2023-06-14T13:28:26.665Z"}
+{"level":"info","message":"endpoint called /prompt=test","service":"openai-client-service","timestamp":"2023-06-14T13:28:34.426Z"}
+{"level":"info","message":"endpoint called /favicon.ico","service":"openai-client-service","timestamp":"2023-06-14T13:28:34.451Z"}
+{"level":"info","message":"endpoint called /","service":"openai-client-service","timestamp":"2023-06-14T13:28:40.429Z"}
+{"level":"info","message":"OpenAI response promt_tokens:1 completion_tokens:10 total_tokens:11","service":"openai-client-service","timestamp":"2023-06-14T13:28:41.437Z"}
+{"level":"error","message":"OpenAI error AggregateError","service":"openai-client-service","timestamp":"2023-06-14T13:28:41.441Z"}
+{"level":"info","message":"endpoint called /favicon.ico","service":"openai-client-service","timestamp":"2023-06-14T13:28:41.457Z"}
