@@ -1,0 +1,41 @@
+{
+  "id": "263ce6a8-746f-4abf-8776-751650c54a91",
+  "title": "IoT Log Line Simulator",
+  "description": "",
+  "tasks": {
+    "simulate_conveyor_line": {
+      "name": "simulate_conveyor_line",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// Simulates messages originating from the control system of \n// multiple conveyor lines.\nconst NUMBER_CONVEYOR_LINES = 5;\nconst PUMPS_PER_LINE = 3;\n\n// Define a list of log line templates that are sent with the configured probabilities.\n// Just add your own log lines here and define how often they should be triggered.\nconst EVENT_TEMPLATES = [\n  { 'probability' : 0.001, 'level' : 'ERROR', 'template' : 'Timestamp: {ts} | Event: Pump failure | Location: Conveyor Line {line_nr} | Severity: Error | Description: Pump {pump_nr} on Conveyor Line {line_nr} has experienced a failure. Immediate inspection and maintenance required.' },\n  { 'probability' : 0.01, 'level' : 'INFO', 'template' : 'Timestamp: {ts} | | Event: Abnormal Vibration | Location: Conveyor Line {line_nr} | Severity: Warning | Description: Abnormal vibration levels detected in Line {line_nr}. Immediate inspection required to prevent equipment damage.' },\n  { 'probability' : 0.10, 'level' : 'INFO', 'template' : 'Timestamp: {ts} | Event: Low pump pressure | Location: Conveyor Line {line_nr} | Severity: Info | Description: Low pressure on Pump {pump_nr} on Conveyor Line {line_nr}.' }\n]\n\nimport { logsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\n\nexport default async function ({ execution_id }) {\n  const ts_now = new Date().toISOString();\n  var ts_orig = new Date(); \n  // simulate a second delayed origin time for the log, to simulate delayed delivery\n  ts_orig.setMinutes(ts_orig.getMinutes() - Math.floor((Math.random()*10)+1));\n  const ts_orig_str = ts_orig.toISOString();\n  \n  const logs = [];\n  for(var line = 1; line < NUMBER_CONVEYOR_LINES; line++) {\n    for(var pump = 1; pump < PUMPS_PER_LINE; pump++) {\n      EVENT_TEMPLATES.forEach(function(template) {\n        if(Math.random() < template.probability) {\n          logs.push({\n            'content': template.template.replaceAll('{ts}', ts_now).replaceAll('{line_nr}', line.toString()).replaceAll('{pump_nr}', pump.toString()),\n            'loglevel' : template.level,\n            'log.source': '/var/log/syslog',\n            'log.tag': ['line' + line.toString(), 'pump' + pump.toString()],\n            'record_ts' : ts_orig_str\n          });\n        }\n      });\n    }\n  }\n  console.log(logs);\n  if(logs.length>0) {\n    logsClient.storeLog({\n      body: logs,\n      type: 'application/json; charset=utf-8',\n    })\n    .then((response) => console.log(response))\n    .catch((e) => console.error(e));\n  }\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    }
+  },
+  "ownerType": "USER",
+  "isPrivate": true,
+  "trigger": {
+    "schedule": {
+      "rule": null,
+      "trigger": {
+        "type": "interval",
+        "intervalMinutes": 1
+      },
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "isFaulty": false,
+      "nextExecution": "2023-09-01T07:37:00.000Z",
+      "filterParameters": {
+        "earliestStart": "2023-08-31",
+        "earliestStartTime": "00:00"
+      },
+      "inputs": {}
+    }
+  },
+  "schemaVersion": 3
+}

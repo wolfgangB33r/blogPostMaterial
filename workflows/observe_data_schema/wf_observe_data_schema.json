@@ -1,0 +1,58 @@
+{
+  "id": "7d420eca-6899-4893-8af8-cbdd5ebe0ae1",
+  "title": "Observe data schema",
+  "description": "",
+  "tasks": {
+    "check_data_schema": {
+      "name": "check_data_schema",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// Workflow step that counts the number of distinct fields \n// for a given query data schema.\nimport { execution } from '@dynatrace-sdk/automation-utils';\nimport { eventsClient, EventIngestEventType } from \"@dynatrace-sdk/client-classic-environment-v2\";\nimport { metricsClient } from '@dynatrace-sdk/client-classic-environment-v2';\n// the metric name to write the count result to\nconst METRIC_NAME = \"data.observability.fields\" \nconst QUERY_TASK_ID = 'fetch_selected_data_records';\n\nexport default async function ({ execution_id }) {\n  const e = await execution(execution_id);\n  const data = (await e.result(QUERY_TASK_ID))['records'];\n  \n  var metricBody = \"\";\n  data.forEach(function (record) {\n    metricBody += METRIC_NAME + \",query=\" + \"cpu_event_schema\" + \" \" + Object.keys(record).length + \"\\n\";\n  });\n\n  const c = {\n    body : metricBody\n  }\n\n  console.log(metricBody);\n  if(data.length > 0) {\n    const result = await metricsClient.ingest(c);\n  }\n  return {  };\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 2
+      },
+      "predecessors": [
+        "fetch_selected_data_records"
+      ],
+      "conditions": {
+        "states": {
+          "fetch_selected_data_records": "OK"
+        }
+      }
+    },
+    "fetch_selected_data_records": {
+      "name": "fetch_selected_data_records",
+      "description": "Executes DQL query",
+      "action": "dynatrace.automations:execute-dql-query",
+      "input": {
+        "query": "fetch events, from:now()-1h, to:now()\n| filter event.kind == \"DAVIS_EVENT\"\n| filter event.name == \"CPU saturation\""
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    }
+  },
+  "ownerType": "USER",
+  "isPrivate": true,
+  "trigger": {
+    "schedule": {
+      "rule": null,
+      "trigger": {
+        "type": "cron",
+        "cron": "0 * * * *"
+      },
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "isFaulty": false,
+      "nextExecution": "2023-08-31T12:00:00.000Z",
+      "filterParameters": {},
+      "inputs": {}
+    }
+  },
+  "schemaVersion": 3
+}

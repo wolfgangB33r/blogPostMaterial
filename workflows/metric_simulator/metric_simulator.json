@@ -1,0 +1,64 @@
+{
+  "id": "225093d9-08c0-4769-b5c7-2fbd04724063",
+  "title": "Metric Simulation",
+  "description": "A simple metric simulator that generates variable seasonal metrics written by Wolfgang Beer",
+  "tasks": {
+    "monotonic": {
+      "name": "monotonic",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// This action continously simulates monotonic increasing metric values\n// \nimport { coreClient } from '@dynatrace-sdk/client-core';\nimport { metricsClient } from '@dynatrace-sdk/client-classic-environment-v2';\n\nconst METRIC_NAME_PREFIX = \"sim.monotonic\" \n \nfunction rand(min, max) {\n  return Math.floor(min + Math.random()*(max - min + 1))\n}\n\nfunction monotonic_generator(minutes) {\n    return minutes;\n}\n\nexport default async function({execution_id}) {      \n  const today = new Date();\n  \n  var metricBody = \"\";\n  var minutes = today.getTime() / 1000 / 60;\n\n  var value = monotonic_generator(minutes);\n  metricBody += METRIC_NAME_PREFIX + \",dim1=value1,dim2=value2 \" + value + \"\\n\";\n  console.log(metricBody);\n  \n  const c = {\n    body : metricBody\n  }\n  \n  const result = await metricsClient.ingest(c);\n  console.log(result);\n}"
+      },
+      "position": {
+        "x": -1,
+        "y": 1
+      },
+      "predecessors": []
+    },
+    "disk_metrics": {
+      "name": "disk_metrics",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// This action continously simulates the following metric scenarios:\n// - 2 slowly decreasing disk free percentage metrics (c and /) with a random noise component, resets every month\n// - 2 stable disk free percentage metrics (mnt and /root) with different levels and random noise component\n// \nimport { coreClient } from '@dynatrace-sdk/client-core';\nimport { metricsClient } from '@dynatrace-sdk/client-classic-environment-v2';\n\nconst METRIC_NAME_PREFIX = \"sim.host.disk.free\" \n\nfunction rand(min, max) {\n  return Math.floor(min + Math.random()*(max - min + 1))\n}\n\nexport default async function({execution_id}) {      \n  // your code goes here\n  const today = new Date();\n  const year  = today.getFullYear();\n  const month = (today.getMonth() + 1).toString().padStart(2, \"0\");\n  const day   = today.getDate().toString().padStart(2, \"0\");\n  \n  const level_1 = 75 - day;\n  const level_2 = 35 - day;\n\n  var metricBody = METRIC_NAME_PREFIX + \",hostname=prod-useast-01,diskname=c \" + (level_1 - rand(0, 3)) + \"\\n\";\n  metricBody += METRIC_NAME_PREFIX + \",hostname=prod-useast-01,diskname=mnt \" + (50 - rand(0, 3)) + \"\\n\"\n  metricBody += METRIC_NAME_PREFIX + \",hostname=prod-sydney-05,diskname=/ \" + (level_2 - rand(0, 3)) + \"\\n\"\n  metricBody += METRIC_NAME_PREFIX + \",hostname=prod-sydney-05,diskname=/root \" + (40 - rand(0, 3)) + \"\\n\"\n\n  // log the complete metric ingest payload    \n  console.log(metricBody);\n  \n  const c = {\n    body : metricBody\n  }\n  \n  const result = await metricsClient.ingest(c);\n  console.log(result);\n}"
+      },
+      "position": {
+        "x": 1,
+        "y": 1
+      },
+      "predecessors": []
+    },
+    "seasonal_metric": {
+      "name": "seasonal_metric",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// This action continously simulates metrics with variable seasonality\n// \nimport { coreClient } from '@dynatrace-sdk/client-core';\nimport { metricsClient } from '@dynatrace-sdk/client-classic-environment-v2';\n\nconst METRIC_NAME_PREFIX = \"sim.seasonal\" \nconst PERIODS_MIN = [15, 60, 6 * 60, 24 * 60]\nconst NOISE_LEVEL = [0, 1, 2, 3, 5]\n \nfunction rand(min, max) {\n  return Math.floor(min + Math.random()*(max - min + 1))\n}\n\nfunction seasonal_generator(period_minutes, noise_level, minute) {\n    return (Math.cos(2 * Math.PI * minute / period_minutes) * 10) + 10 + Math.random() * noise_level;\n}\n\nexport default async function({execution_id}) {      \n  const today = new Date();\n  \n  var metricBody = \"\";\n  var minutes = today.getTime() / 1000 / 60;\n\n  for (let p = 0; p < PERIODS_MIN.length; p++) {\n    for (let n = 0; n < NOISE_LEVEL.length; n++) {\n      var value = seasonal_generator(PERIODS_MIN[p], NOISE_LEVEL[n], minutes);\n      metricBody += METRIC_NAME_PREFIX + \",period_minutes=\" + PERIODS_MIN[p] + \",noise=\" + NOISE_LEVEL[n] + \" \" + value + \"\\n\";\n    }\n  }\n  console.log(metricBody);\n  \n  const c = {\n    body : metricBody\n  }\n  \n  const result = await metricsClient.ingest(c);\n  console.log(result);\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    }
+  },
+  "ownerType": "USER",
+  "isPrivate": false,
+  "trigger": {
+    "schedule": {
+      "rule": null,
+      "trigger": {
+        "type": "cron",
+        "cron": "* * * * *"
+      },
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "isFaulty": false,
+      "nextExecution": "2023-08-30T09:06:00.000Z",
+      "filterParameters": {},
+      "inputs": {}
+    }
+  },
+  "schemaVersion": 3
+}
