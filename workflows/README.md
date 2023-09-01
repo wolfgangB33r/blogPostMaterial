@@ -6,6 +6,10 @@ The metric simulator is used to simulate a continous stream of metric measuremen
 Filtering by noise level or by period selects individual seasonal metrics.
 It also generates simulated disk metrics that continously decrease in volume every day until the volume automatically resets at the beginning of a month.
 
+![seasonal metric](./metric_simulator/metrics_noise.png "Seasonal metrics with noise levels")
+
+![seasonal metric](./metric_simulator/metrics_filtered.png "Seasonal metrics filtered")
+
 ## IoT log line simulator
 
 The IoT log line simulator is used to produce a continous stream of log lines similar what a SCADA system would forward for an industrial machinery such as 
