@@ -8,7 +8,7 @@ It also generates simulated disk metrics that continously decrease in volume eve
 
 ![seasonal metric](./metric_simulator/metrics_noise.png "Seasonal metrics with noise levels")
 
-![seasonal metric](./metric_simulator/metrics_filtered.png "Seasonal metrics filtered")
+![seasonal metric](./metric_simulator/metric_filtered.png "Seasonal metrics filtered")
 
 ## IoT log line simulator
 
