@@ -1,6 +1,6 @@
 {
   "id": "263ce6a8-746f-4abf-8776-751650c54a91",
-  "title": "IoT Log Line Simulator",
+  "title": "IoT data simulator",
   "description": "",
   "tasks": {
     "simulate_conveyor_line": {

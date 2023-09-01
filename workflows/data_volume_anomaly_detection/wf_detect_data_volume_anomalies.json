@@ -1,6 +1,6 @@
 {
   "id": "9c9a6077-ea06-4ec8-81d5-eb9930942bb0",
-  "title": "Detect data volume anomalies",
+  "title": "Data volume anomaly detector",
   "description": "",
   "tasks": {
     "check_and_alert": {

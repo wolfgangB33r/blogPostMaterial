@@ -1,6 +1,6 @@
 {
   "id": "225093d9-08c0-4769-b5c7-2fbd04724063",
-  "title": "Metric Simulation",
+  "title": "Metric simulator",
   "description": "A simple metric simulator that generates variable seasonal metrics written by Wolfgang Beer",
   "tasks": {
     "monotonic": {

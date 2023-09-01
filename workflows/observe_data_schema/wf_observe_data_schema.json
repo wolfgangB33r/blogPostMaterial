@@ -1,6 +1,6 @@
 {
   "id": "7d420eca-6899-4893-8af8-cbdd5ebe0ae1",
-  "title": "Observe data schema",
+  "title": "Data schema anomaly detector",
   "description": "",
   "tasks": {
     "check_data_schema": {
