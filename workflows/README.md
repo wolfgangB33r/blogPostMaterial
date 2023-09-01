@@ -16,6 +16,8 @@ The IoT log line simulator is used to produce a continous stream of log lines si
 a conveyor belt.
 It is configurable in terms of the log line templates it sends, the probabilities of each log line and the number of pumps and conveyor lines the simulator should generate logs for.
 
+![IoT log lines](./iot_log_simulator/iot_log_lines.png "IoT log lines")
+
 ## Data volume anomaly detector
 
 This workflow is used to observe the typical data volume for a given DQL query, produce a forecast on what volume is expected in the future and raises an event in case the current volume breaches the lower band of the predicted volume.
