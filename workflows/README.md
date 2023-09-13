@@ -10,6 +10,8 @@ It also generates simulated disk metrics that continously decrease in volume eve
 
 ![seasonal metric](./metric_simulator/metric_filtered.png "Seasonal metrics filtered")
 
+Get the workflow [here](./metric_simulator/) 
+
 ## IoT log line simulator
 
 The IoT log line simulator is used to produce a continous stream of log lines similar what a SCADA system would forward for an industrial machinery such as 
@@ -18,13 +20,19 @@ It is configurable in terms of the log line templates it sends, the probabilitie
 
 ![IoT log lines](./iot_log_simulator/iot_log_lines.png "IoT log lines")
 
+Get the workflow [here](./iot_log_simulator/) 
+
 ## Data volume anomaly detector
 
 This workflow is used to observe the typical data volume for a given DQL query, produce a forecast on what volume is expected in the future and raises an event in case the current volume breaches the lower band of the predicted volume.
 
+Get the workflow [here](./data_volume_anomaly_detection/) 
+
 ## Observe the data schema
 
 This workflow is used to observe a given data schema by using DQL, counting the number of distinct field keys and writing a metric that persists this field key count over time, which can be used to alert on abnormal deviations.
+
+Get the workflow [here](./observe_data_schema/) 
 
 ## Disk capacity prediction
 
