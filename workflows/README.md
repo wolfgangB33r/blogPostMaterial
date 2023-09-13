@@ -38,4 +38,6 @@ Get the workflow [here](./observe_data_schema/)
 
 This workflow is used to predict resource capacities such as free disk and raise events in case the predicted free disk goes below the lower predicted band.
 
+![disk prediction](./disk_prediction/disk_forecast.png "Disk forecast")
+
 Get the workflow [here](./disk_prediction/) 
