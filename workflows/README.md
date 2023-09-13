@@ -26,3 +26,8 @@ This workflow is used to observe the typical data volume for a given DQL query, 
 
 This workflow is used to observe a given data schema by using DQL, counting the number of distinct field keys and writing a metric that persists this field key count over time, which can be used to alert on abnormal deviations.
 
+## Disk capacity prediction
+
+This workflow is used to predict resource capacities such as free disk and raise events in case the predicted free disk goes below the lower predicted band.
+
+Get the workflow [here](./disk_prediction/) 
