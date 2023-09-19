@@ -1,30 +1,90 @@
 {
   "id": "f7edf6c4-6c05-4945-86a3-939e92ec3aa6",
-  "title": "Wolfgang's Root-Cause Engine ;)",
+  "title": "Topology Crawler",
   "description": "",
   "tasks": {
+    "rank": {
+      "name": "rank",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nexport default async function ({ execution_id }) {\n  // your code goes here\n  // e.g. get the current execution\n  const ex = await execution(execution_id);\n  console.log('Automated script execution on behalf of', ex.trigger);\n  \n  return { triggeredBy: ex.trigger };\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 4
+      },
+      "predecessors": [
+        "check"
+      ],
+      "conditions": {
+        "states": {
+          "check": "OK"
+        }
+      }
+    },
+    "check": {
+      "name": "check",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';;\n\n/*\n  fetch events | filter event.kind==\"DAVIS_EVENT\"\n  | filter in(affected_entity_ids, {\"HOST-44FBD6A68DFEF57E\"}) \n  | expand entity_id=affected_entity_ids\n  | summarize count = countDistinct(event.id), by:{entity_id, event.id, event.name, event.category}\n  */\n\nasync function countEventsPerEntity(entity_id_array) {\n  const query = 'fetch events, from:Now()-15m, to:Now() | filter event.kind==\"DAVIS_EVENT\"' +\n    '| filter in(affected_entity_ids, {\\\"'  + entity_id_array.join(\"\\\",\\\"\") + '\\\"}) ' + \n    '| expand entity_id=affected_entity_ids ' +\n    '| summarize count = countDistinct(event.id), by:{entity_id, event.id, event.name, event.category}'\n  const timeout = 60;\n  return await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n}\n\n\nexport default async function ({ execution_id }) {\n  const e = await execution(execution_id);\n  const analyzed = (await e.result('crawl'))['analyzed'];\n  console.log(await countEventsPerEntity(Object.keys(analyzed)));\n\n  \n  \n  return {  };\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 3
+      },
+      "predecessors": [
+        "crawl"
+      ],
+      "conditions": {
+        "states": {
+          "crawl": "OK"
+        }
+      }
+    },
     "crawl": {
       "name": "crawl",
       "description": "Build a custom task running js Code",
       "action": "dynatrace.automations:run-javascript",
       "input": {
-        "script": "import { execution } from '@dynatrace-sdk/automation-utils';\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';;\n/*\nThe maximum number of recursive analysis steps following the topology.\n*/\nconst MAX_DEPTH = 5;\n/*\nLocal config to define which relationship to follow on which entity type to which entity type.\n*/\nconst walker_config = {\n  \"SERVICE\" : [\n    {\"from_type\" : \"dt.entity.service\", \"rel_name\" : \"calls\", \"to_type\" : \"dt.entity.service\"},\n    {\"from_type\" : \"dt.entity.service\", \"rel_name\" : \"runs_on\", \"to_type\" : \"dt.entity.process_group_instance\"},\n  ]\n}\n\n/*\nconst analyzed = {\n  'SERVICE-123' : { 'id' : 'SERVICE-123', 'entity.name' : 'name'},\n};\n*/\nconst analyzed = {};\n/*\nconst graph = {\n  a: ['a', 'b'],\n  b: ['c'],\n}\n*/\nconst graph = {}\n\n// crawl service dependencies\nasync function followTopology(from_type, rel_name, to_type, entity_id_array) {\n  const query = 'fetch ' + from_type + ' | filter in(id, {\\\"'  + entity_id_array.join(\"\\\",\\\"\") + '\\\"}) | expand to = ' + rel_name + '[' + to_type + '] | fieldsRename from = id';\n  console.log(query);\n  const timeout = 60;\n  return await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n}\n\n// recursive walker\nasync function visit(depth, e_ids_arr) {\n  // limit the analysis depth\n  if(depth > MAX_DEPTH) {\n    return\n  }\n  console.log(depth + \": visits \" + e_ids_arr);\n  // check each given entity in an entity type agnostic way\n  const r_e_ids_arr = [];\n  for (const entity of e_ids_arr) {\n    // check if entity was already visited or not\n    if(!(entity in analyzed)) {\n      graph[entity] = {};\n      // remember the analyzed parent entity in the list of already visited entities to not visit them twice\n      analyzed[entity] = {\"id\" : entity};\n      // extract the entity type from the id and load the walking relations that are possible\n      if(entity.substring(0, entity.indexOf('-')) in walker_config) {\n        // for each of the configured relationships, a one relationship step is done in DQL\n        for (const rel of walker_config[entity.substring(0, entity.indexOf('-'))]) {\n          graph[entity][rel[\"rel_name\"]] = [];\n          const result = await followTopology(rel[\"from_type\"], rel[\"rel_name\"], rel[\"to_type\"], [entity]);\n          // add all the entities to the list of the next recursive visit\n          for (const t_entity of result['result']['records']) {\n            // remember additional properties of visited entities\n            analyzed[entity] = {\"entity.name\" : t_entity[\"entity.name\"], \"id\" : entity };\n            if(t_entity[\"to\"]) {\n              r_e_ids_arr.push(t_entity[\"to\"]);\n              graph[entity][rel[\"rel_name\"]].push(t_entity[\"to\"]);\n            }\n          }\n        }\n      } else {\n        console.log(\"Missing walk config for type: \" + entity.substring(0, entity.indexOf('-')));\n      }\n    }\n  }\n  // call recursively\n  if(r_e_ids_arr.length>0) {\n    await visit((depth+1), r_e_ids_arr); \n  }\n}\n\n// main task\nexport default async function ({ execution_id }) {\n  const ex = await execution(execution_id);\n  // start test with a single service\n  const i_e = [\"SERVICE-8A2FB78FA0231EEF\"];\n  // start the crawler\n  await visit(0, i_e);\n  \n  //console.log(await followTopology(\"dt.entity.process_group_instance\", \"runs_on\", \"dt.entity.host\", [\"PROCESS_GROUP_INSTANCE-7781081B1FA02AE3\"]));\n  //console.log(await followTopology(\"dt.entity.service\", \"runs_on\", \"dt.entity.process_group_instance\", i_e));\n  \n  console.log(\"Entities visited during analysis:\");\n  console.log(analyzed);\n  console.log(\"Analysis graph:\");\n  console.log(graph);\n  \n  return { 'visited': analyzed, 'graph' : graph };\n}"
+        "script": "/*\nCausation step that crawls the connected topology, based on a set of starting point entities.\n*/\nimport { execution } from '@dynatrace-sdk/automation-utils';\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';\n/*\nThe maximum number of recursive analysis steps following the topology.\n*/\nconst MAX_DEPTH = 5;\n/*\nLocal config to define which relationship to follow on which entity type to which entity type.\n*/\nconst walker_config = {\n  \"SERVICE\" : [\n    {\"from_type\" : \"dt.entity.service\", \"rel_name\" : \"calls\", \"to_type\" : \"dt.entity.service\"},\n    {\"from_type\" : \"dt.entity.service\", \"rel_name\" : \"runs_on\", \"to_type\" : \"dt.entity.process_group_instance\"},\n  ]\n}\n\n/*\nconst analyzed = {\n  'SERVICE-123' : { 'id' : 'SERVICE-123', 'entity.name' : 'name'},\n};\n*/\nconst analyzed = {};\n/*\nconst graph = {\n  a: ['a', 'b'],\n  b: ['c'],\n}\n*/\nconst graph = {}\n\n// crawl service dependencies\nasync function followTopology(from_type, rel_name, to_type, entity_id_array) {\n  const query = 'fetch ' + from_type + ' | filter in(id, {\\\"'  + entity_id_array.join(\"\\\",\\\"\") + '\\\"}) | expand to = ' + rel_name + '[' + to_type + '] | fieldsRename from = id';\n  console.log(query);\n  const timeout = 60;\n  return await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n}\n\n// recursive walker\nasync function visit(depth, e_ids_arr) {\n  // limit the analysis depth\n  if(depth > MAX_DEPTH) {\n    return\n  }\n  console.log(depth + \": visits \" + e_ids_arr);\n  // check each given entity in an entity type agnostic way\n  const r_e_ids_arr = [];\n  for (const entity of e_ids_arr) {\n    // check if entity was already visited or not\n    if(!(entity in analyzed)) {\n      graph[entity] = {};\n      // remember the analyzed parent entity in the list of already visited entities to not visit them twice\n      analyzed[entity] = {'depth' : depth, \"id\" : entity};\n      // extract the entity type from the id and load the walking relations that are possible\n      if(entity.substring(0, entity.indexOf('-')) in walker_config) {\n        // for each of the configured relationships, a one relationship step is done in DQL\n        for (const rel of walker_config[entity.substring(0, entity.indexOf('-'))]) {\n          graph[entity][rel[\"rel_name\"]] = [];\n          const result = await followTopology(rel[\"from_type\"], rel[\"rel_name\"], rel[\"to_type\"], [entity]);\n          // add all the entities to the list of the next recursive visit\n          for (const t_entity of result['result']['records']) {\n            // remember additional properties of visited entities\n            analyzed[entity] = {'depth' : depth, \"entity.name\" : t_entity[\"entity.name\"], \"id\" : entity };\n            if(t_entity[\"to\"]) {\n              r_e_ids_arr.push(t_entity[\"to\"]);\n              graph[entity][rel[\"rel_name\"]].push(t_entity[\"to\"]);\n            }\n          }\n        }\n      } else {\n        console.log(\"Missing walk config for type: \" + entity.substring(0, entity.indexOf('-')));\n      }\n    }\n  }\n  // call recursively\n  if(r_e_ids_arr.length>0) {\n    await visit((depth+1), r_e_ids_arr); \n  }\n}\n\n// main task\nexport default async function ({ execution_id }) {\n  const ex = await execution(execution_id);\n  // start test with a single service\n  const i_e = [\"SERVICE-8A2FB78FA0231EEF\"];\n  // start the crawler\n  await visit(0, i_e);\n  \n  //console.log(await followTopology(\"dt.entity.process_group_instance\", \"runs_on\", \"dt.entity.host\", [\"PROCESS_GROUP_INSTANCE-7781081B1FA02AE3\"]));\n  //console.log(await followTopology(\"dt.entity.service\", \"runs_on\", \"dt.entity.process_group_instance\", i_e));\n  \n  console.log(\"Entities visited during analysis:\");\n  console.log(analyzed);\n  console.log(\"Analysis graph:\");\n  console.log(graph);\n  \n  return { 'analyzed': analyzed, 'graph' : graph };\n}"
       },
       "position": {
         "x": 0,
         "y": 2
       },
       "predecessors": [
-        "check_triggers"
+        "trigger"
       ],
       "conditions": {
         "states": {
-          "check_triggers": "OK"
+          "trigger": "OK"
         }
       }
     },
-    "check_triggers": {
-      "name": "check_triggers",
+    "store": {
+      "name": "store",
+      "description": "Build a custom task running js Code",
+      "action": "dynatrace.automations:run-javascript",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nexport default async function ({ execution_id }) {\n  // your code goes here\n  // e.g. get the current execution\n  const ex = await execution(execution_id);\n  console.log('Automated script execution on behalf of', ex.trigger);\n  \n  return { triggeredBy: ex.trigger };\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 5
+      },
+      "predecessors": [
+        "rank"
+      ],
+      "conditions": {
+        "states": {
+          "rank": "OK"
+        }
+      }
+    },
+    "trigger": {
+      "name": "trigger",
       "description": "Executes DQL query",
       "action": "dynatrace.automations:execute-dql-query",
       "input": {
@@ -37,6 +97,8 @@
       "predecessors": []
     }
   },
+  "actor": "7d244b32-3761-439d-ae93-c2e02e4590a5",
+  "owner": "7d244b32-3761-439d-ae93-c2e02e4590a5",
   "ownerType": "USER",
   "isPrivate": true,
   "trigger": {},
