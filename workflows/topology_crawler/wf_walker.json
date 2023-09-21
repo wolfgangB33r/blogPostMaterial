@@ -28,7 +28,7 @@
       "description": "Build a custom task running js Code",
       "action": "dynatrace.automations:run-javascript",
       "input": {
-        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';;\n\n/*\n  fetch events | filter event.kind==\"DAVIS_EVENT\"\n  | filter in(affected_entity_ids, {\"HOST-44FBD6A68DFEF57E\"}) \n  | expand entity_id=affected_entity_ids\n  | summarize count = countDistinct(event.id), by:{entity_id, event.id, event.name, event.category}\n  */\n\nasync function countEventsPerEntity(entity_id_array) {\n  const query = 'fetch events, from:Now()-15m, to:Now() | filter event.kind==\"DAVIS_EVENT\"' +\n    '| filter in(affected_entity_ids, {\\\"'  + entity_id_array.join(\"\\\",\\\"\") + '\\\"}) ' + \n    '| expand entity_id=affected_entity_ids ' +\n    '| summarize count = countDistinct(event.id), by:{entity_id, event.id, event.name, event.category}'\n  const timeout = 60;\n  return await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n}\n\n\nexport default async function ({ execution_id }) {\n  const e = await execution(execution_id);\n  const analyzed = (await e.result('crawl'))['analyzed'];\n  console.log(await countEventsPerEntity(Object.keys(analyzed)));\n\n  \n  \n  return {  };\n}"
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';;\n\n/*\n  fetch events | filter event.kind==\"DAVIS_EVENT\"\n  | filter in(affected_entity_ids, {\"HOST-44FBD6A68DFEF57E\"}) \n  | expand entity_id=affected_entity_ids\n  | summarize count = countDistinct(event.id), by:{entity_id, event.id, event.name, event.category}\n  */\n\nasync function countEventsPerEntity(entity_id_array) {\n  const query = 'fetch events, from:Now()-15m, to:Now() | filter event.kind==\"DAVIS_EVENT\"' +\n    '| filter in(affected_entity_ids, {\\\"'  + entity_id_array.join(\"\\\",\\\"\") + '\\\"}) ' + \n    '| expand entity_id=affected_entity_ids ' +\n    '| summarize count = countDistinct(event.id), by:{entity_id}'\n  console.log(query);\n  const timeout = 60;\n  return await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n}\n\n\nexport default async function ({ execution_id }) {\n  const e = await execution(execution_id);\n  const analyzed = (await e.result('crawl'))['analyzed'];\n  console.log(await countEventsPerEntity(Object.keys(analyzed)));\n\n  \n  \n  return {  };\n}"
       },
       "position": {
         "x": 0,
@@ -97,8 +97,6 @@
       "predecessors": []
     }
   },
-  "actor": "7d244b32-3761-439d-ae93-c2e02e4590a5",
-  "owner": "7d244b32-3761-439d-ae93-c2e02e4590a5",
   "ownerType": "USER",
   "isPrivate": true,
   "trigger": {},
