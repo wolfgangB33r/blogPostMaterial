@@ -2,7 +2,7 @@ from traceloop.sdk import Traceloop
 import os
 import openai
 
-Traceloop.init(app_name="openai-tracing", disable_batch=True)
+Traceloop.init(app_name="openai-obs", disable_batch=True)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
