@@ -2,19 +2,19 @@
 
 The Viessmann NTC 10k Termistor 7181301 represents a classic sensor for water temperature of all kinds, mostly used for solar water buffers.
 
-![info](ntc_10k_viessmann_termistor.jpeg)
+![NTC 10k Viessmann termistor](ntc_10k_viessmann_termistor.jpeg)
 
 The NTC 10k termistor is a 10K temperature dependent resistor with 2 wires that can be read from Arduino or ESP8266 by using a voltage divider circuit, 
 using a resistor of the same resistance 10k as the termistor has.
 The 10k resistor to use shows the colors brown/black/orange, as it is shown below:
-[](/ESP32/HomeSensors/NTC_10K_Termistor/10k_resistor_colors.png)
+![10k resistor color codes](10k_resistor_colors.png)
 
 In order to get an analog readout on for the voltage of your voltage divider you need to choose an analog input pin on your ESP8266, as shown below:
 
-[](/ESP32/HomeSensors/NTC_10K_Termistor/esp8266_analog_pin.png)
+![esp8266 analog pin](esp8266_analog_pin.png)
 
 Now connect the NTC 10k Viessmann NTC termistor to one of the 3V and ground pins of your ESP8266 and connect the 10k resistor divided middle connection to your analog pin, as shown below:
-[](/ESP32/HomeSensors/NTC_10K_Termistor/NTC_10k_esp_circuit.png)
+![esp8266 NTC 10k termistor circuit](NTC_10k_esp_circuit.png)
 
 ```java
 // Water temperatur Viessmann NTC 10K Termistor Sensor 
