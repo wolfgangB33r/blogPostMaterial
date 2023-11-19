@@ -9,12 +9,14 @@ using a resistor of the same resistance 10k as the termistor has.
 The 10k resistor to use shows the colors brown/black/orange, as it is shown below:
 ![10k resistor color codes](10k_resistor_colors.png)
 
-In order to get an analog readout on for the voltage of your voltage divider you need to choose an analog input pin on your ESP8266, as shown below:
+In order to get an analog readout on for the voltage of your voltage divider you need to choose an analog input pin on your ESP8266 as shown below:
 
 ![esp8266 analog pin](esp8266_analog_pin.png)
 
 Now connect the NTC 10k Viessmann NTC termistor to one of the 3V and ground pins of your ESP8266 and connect the 10k resistor divided middle connection to your analog pin, as shown below:
 ![esp8266 NTC 10k termistor circuit](NTC_10k_esp_circuit.png)
+
+The last part is to use the following Arduino code to read out the scaled voltage value from the analog pin and to calculate the temperature value from it.
 
 ```java
 // Water temperatur Viessmann NTC 10K Termistor Sensor 
