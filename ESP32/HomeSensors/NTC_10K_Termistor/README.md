@@ -2,7 +2,7 @@
 
 The Viessmann NTC 10k Termistor 7181301 represents a classic sensor for water temperature of all kinds, mostly used for solar water buffers.
 
-[](ntc_10k_viessmann_termistor.jpeg)
+![info](ntc_10k_viessmann_termistor.jpeg)
 
 The NTC 10k termistor is a 10K temperature dependent resistor with 2 wires that can be read from Arduino or ESP8266 by using a voltage divider circuit, 
 using a resistor of the same resistance 10k as the termistor has.
