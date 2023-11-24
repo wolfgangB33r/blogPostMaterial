@@ -21,25 +21,31 @@ The last part is to use the following Arduino code to read out the scaled voltag
 ```java
 // Water temperatur Viessmann NTC 10K Termistor Sensor 
 // Needs to connect to one of the ESP32 or ESP8866 analog input pins like A0
-int TERMISTORPIN = A0;
+const int analogPin = A0; // Analog pin connected to the NTC thermistor
+const int resistorValue = 10000; // Resistor value in ohms
 
-float readTermistorValue() {
-  int Vo;
-  float R1 = 10000; // 10K Ohm Termistor
-  float logR2, R2, T, Tc;
-  float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
+void setup() {
+  Serial.begin(115200);
+}
 
-  Vo = analogRead(TERMISTORPIN);
-  Serial.print(Vo / 1023.0);
-  Serial.println(" V");   
-  
-  R2 = R1 * (1023.0 / (float)Vo - 1.0);
-  logR2 = log(R2);
-  T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
-  Tc = T - 273.15; 
+void loop() {
+  int sensorValue = analogRead(analogPin);
 
-  Serial.print(Tc);
-  Serial.println(" C");   
-  return Tc;
+  // Convert analog reading to resistance
+  float resistance = resistorValue / ((1023.0 / sensorValue) - 1.0);
+
+  // Use the Steinhart-Hart equation to convert resistance to temperature in Celsius
+  float temperature = log(resistance / 10000.0) / 3950.0 + 1.0 / (25 + 273.15);
+
+  // Convert temperature to Fahrenheit if desired
+  float temperatureF = (temperature * 9.0 / 5.0) + 32.0;
+
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" °C | ");
+  Serial.print(temperatureF);
+  Serial.println(" °F");
+
+  delay(1000); // Delay for one second before reading again
 }
 ```
