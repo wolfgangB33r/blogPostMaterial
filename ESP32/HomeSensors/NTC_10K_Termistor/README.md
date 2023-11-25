@@ -49,3 +49,28 @@ void loop() {
   delay(1000); // Delay for one second before reading again
 }
 ```
+
+Simpler termistor library variant is shown below: 
+
+```java
+A simpler implementation variant is to use the out of the box termistor.h library, as it is shown below:
+
+#include <Thermistor.h>
+#include <NTC_Thermistor.h>
+
+#define Referenzwiderstand   10000 // Widerstandswert des Widerstandes der mit dem NTC in Reihe geschaltet wurde.
+#define Nominalwiderstand     10000 // Widerstand des NTC bei Normaltemperatur
+#define Nominaltemperatur    25 // Temperatur, bei der der NTC den angegebenen Widerstand hat
+#define BWert                3750 // Beta Koeffizient(zu finden im Datenblatt des NTC)
+Thermistor* thermistor;
+
+// Water temperatur Viessmann NTC 10K Termistor Sensor 
+// Needs to connect to one of the ESP32 or ESP8866 analog input pins like A0
+int TERMISTORPIN = A0;
+
+// init termistor
+thermistor = new NTC_Thermistor(TERMISTORPIN, Referenzwiderstand, Nominalwiderstand, Nominaltemperatur, BWert);
+
+// Read water temperature
+const double celsius = thermistor->readCelsius();
+```
