@@ -7,6 +7,7 @@ The Viessmann NTC 10k Termistor 7181301 represents a classic sensor for water te
 The NTC 10k termistor is a 10K temperature dependent resistor with 2 wires that can be read from Arduino or ESP8266 by using a voltage divider circuit, 
 using a resistor of the same resistance 10k as the termistor has.
 The 10k resistor to use shows the colors brown/black/orange, as it is shown below:
+
 ![10k resistor color codes](10k_resistor_colors.png)
 
 In order to get an analog readout on for the voltage of your voltage divider you need to choose an analog input pin on your ESP8266 as shown below:
