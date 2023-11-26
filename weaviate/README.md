@@ -4,17 +4,17 @@ Shows how to create a class of questions in Weaviate and how to observe telemetr
 
 ## Necessary Weaviate Docker environment variables
 
-PROMETHEUS_MONITORING_ENABLED: true
-AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: true
-PERSISTENCE_DATA_PATH: /var/lib/weaviate
-ENABLE_MODULES: text2vec-openai
-DEFAULT_VECTORIZER: tect2vec-openai
-OPENAI_AIKEY: sk-yourkey
+- PROMETHEUS_MONITORING_ENABLED: true
+- AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: true
+- PERSISTENCE_DATA_PATH: /var/lib/weaviate
+- ENABLE_MODULES: text2vec-openai
+- DEFAULT_VECTORIZER: tect2vec-openai
+- OPENAI_AIKEY: sk-yourkey
 
 ## Docker ports
 
-8080: 8080 Weaviate client port
-2112: 2112 Prometheus port
+- 8080: 8080 Weaviate client port
+- 2112: 2112 Prometheus port
 
 ## Prometheus
 
