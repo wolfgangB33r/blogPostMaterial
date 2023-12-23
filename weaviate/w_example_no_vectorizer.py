@@ -9,18 +9,17 @@ client = weaviate.Client(
     url = WEAVIATE_ENDPOINT,  
 )
 
-#client.schema.delete_class("Question")
+client.schema.delete_class("Travel")
 
 class_obj = {
-    "class": "Question",
-    "vectorizer": "text2vec-openai",  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
+    "class": "Travel",
+    "vectorizer": "none",  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
     "moduleConfig": {
-        "text2vec-openai": {},
-        "generative-openai": {}
+        
     }
 }
 
-if not client.schema.exists('Question'): # Creates a class of 'Question', if it does not already exist
+if not client.schema.exists('Travel'): # Creates a class of 'Question', if it does not already exist
     # Create class
     client.schema.create_class(class_obj) 
     # Load a tiny jeopardy question sample set
@@ -30,22 +29,22 @@ if not client.schema.exists('Question'): # Creates a class of 'Question', if it 
     client.batch.configure(batch_size=100)  # Configure batch
     with client.batch as batch:  # Initialize a batch process
         for i, d in enumerate(data):  # Batch import data
-            print(f"importing question: {i+1}")
+            print(f"importing travel destinations: {i+1}")
             properties = {
-                "answer": d["Answer"],
-                "question": d["Question"],
-                "category": d["Category"],
+                "destination": d["destination"],
+                "advise": d["advise"]
             }
             batch.add_data_object(
                 data_object=properties,
-                class_name="Question"
+                class_name="Travel",
+                vector=d["vector"]
             )
 
 # Start a query
 response = (
     client.query
-    .get("Question", ["question", "answer", "category"])
-    .with_near_text({"concepts": ["snakes"]})
+    .get("Travel", ["destination", "advise"])
+    .with_near_text({"destination": ["Vienna"]})
     .with_limit(2)
     .do()
 )

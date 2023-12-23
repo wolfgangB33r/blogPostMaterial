@@ -16,6 +16,33 @@ Shows how to create a class of questions in Weaviate and how to observe telemetr
 - 8080: 8080 Weaviate client port
 - 2112: 2112 Prometheus port
 
+## Docker compose with local vectorizer
+
+```yaml
+version: '3.4'
+services:
+  weaviate:
+    image: name-of-your-weaviate-image
+    ports:
+      - 8080:8080
+    environment:
+      CONTEXTIONARY_URL: contextionary:9999
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: './data'
+      ENABLE_MODULES: 'text2vec-contextionary'
+      DEFAULT_VECTORIZER_MODULE: 'text2vec-contextionary'
+      AUTOSCHEMA_ENABLED: 'false'
+  contextionary:
+    environment:
+      OCCURRENCE_WEIGHT_LINEAR_FACTOR: 0.75
+      EXTENSIONS_STORAGE_MODE: weaviate
+      EXTENSIONS_STORAGE_ORIGIN: http://weaviate:8080
+      NEIGHBOR_OCCURRENCE_IGNORE_PERCENTILE: 5
+      ENABLE_COMPOUND_SPLITTING: 'false'
+    image: semitechnologies/contextionary:en0.16.0-v1.2.1
+```
+
 ## Prometheus
 
 URL:2112/metrics
