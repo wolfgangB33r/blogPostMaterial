@@ -9,11 +9,12 @@ import streamlit.components.v1 as components  # Import Streamlit
 
 # The raw file injection possibility
 def inject(tag):
+  print(os.path.dirname(st.__file__) + "/static/index.html")
   with open(os.path.dirname(st.__file__) + "/static/index.html", 'r') as file:
     str = file.read()
     if str.find(tag) == -1:
         idx = str.index('<head>')
-        new_str = str[:idx] + tag + str[idx:]
+        new_str = str[:idx+6] + tag + str[idx+6:]
         with open(os.path.dirname(st.__file__) + "/static/index.html", 'w') as file:
             file.write(new_str)
 
