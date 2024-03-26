@@ -31,8 +31,7 @@ workflow:
             const predictionSummary = { violation: false, violations: new Array<Record<string, string>>() };
             console.log("Total number of predicted lines: " + result.output.length);
             // Check if prediction was successful.
-            if (result.resultStatus == 'SUCCESSFUL' && result.executionStatus == 'COMPLETED') {
-              console.log('Prediction was successful.')
+            if (result && result.executionStatus == 'COMPLETED') {
               // Check each predicted result, if it violates the threshold.
               for (let i = 0; i < result.output.length; i++) {
                 const prediction = result.output[i];
