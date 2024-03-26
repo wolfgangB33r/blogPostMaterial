@@ -1,0 +1,142 @@
+metadata:
+  version: "1"
+  dependencies:
+    apps:
+      - id: dynatrace.automations
+        version: ^1.392.1
+      - id: dynatrace.davis.workflow.actions
+        version: ^1.1.7
+  inputs: []
+workflow:
+  title: Predict Disk Capacity
+  tasks:
+    check_prediction:
+      name: check_prediction
+      description: Build a custom task running js Code
+      action: dynatrace.automations:run-javascript
+      input:
+        script: >
+          import { execution } from '@dynatrace-sdk/automation-utils';
+
+
+          const THRESHOLD = 15;
+
+          const TASK_ID = 'predict_disk_capacity';
+
+
+          export default async function ({ execution_id }) {
+            const exe = await execution(execution_id);
+            const predResult = await exe.result(TASK_ID);
+            const result = predResult['result'];
+            const predictionSummary = { violation: false, violations: new Array<Record<string, string>>() };
+            console.log("Total number of predicted lines: " + result.output.length);
+            // Check if prediction was successful.
+            if (result.resultStatus == 'SUCCESSFUL' && result.executionStatus == 'COMPLETED') {
+              console.log('Prediction was successful.')
+              // Check each predicted result, if it violates the threshold.
+              for (let i = 0; i < result.output.length; i++) {
+                const prediction = result.output[i];
+                // Check if the prediction result is considered valid
+                if (prediction.analysisStatus == 'OK' && prediction.forecastQualityAssessment == 'VALID') {
+                  const lowerPredictions = prediction.timeSeriesDataWithPredictions.records[0]['dt.davis.forecast:lower'];
+                  const lastValue = lowerPredictions[lowerPredictions.length-1];
+                  // check against the threshold
+                  if (lastValue < THRESHOLD) {
+                    predictionSummary.violation = true;
+                    // we need to remember all metric properties in the result, 
+                    // to inform the next actions which disk ran out of space
+                    predictionSummary.violations.push(prediction.timeSeriesDataWithPredictions.records[0]);
+                  }
+                }
+              }
+              console.log(predictionSummary.violations.length == 0 ? 'No violations found :)' : '' + predictionSummary.violations.length + ' capacity shortages were found!')
+              return predictionSummary;
+            } else {
+              console.log('Prediction run failed!');
+            }
+          }
+      position:
+        x: 0
+        y: 2
+      predecessors:
+        - predict_disk_capacity
+      conditions:
+        states:
+          predict_disk_capacity: OK
+    predict_disk_capacity:
+      name: predict_disk_capacity
+      description: Execute a customizable AI/ML task using Davis® analyzers
+      action: dynatrace.davis.workflow.actions:davis-analyze
+      input:
+        body:
+          nPaths: 200
+          useModelCache: true
+          timeSeriesData: "timeseries avg(dt.host.disk.free), by:{dt.entity.host,
+            dt.entity.disk}, bins: 120, from:now()-7d, to:now()"
+          forecastHorizon: 100
+          generalParameters:
+            timeframe:
+              endTime: now
+              startTime: now-6h
+            logVerbosity: TRACING
+            resolveDimensionalQueryData: false
+          coverageProbability: 0.9
+          applyZeroLowerBoundHeuristic: false
+        analyzerName: dt.statistics.GenericForecastAnalyzer
+      position:
+        x: 0
+        y: 1
+      predecessors: []
+    raise_violation_events:
+      name: raise_violation_events
+      description: Build a custom task running js Code
+      action: dynatrace.automations:run-javascript
+      input:
+        script: >-
+          import { eventsClient, EventIngestEventType } from
+          "@dynatrace-sdk/client-classic-environment-v2";
+
+          import { execution } from '@dynatrace-sdk/automation-utils';
+
+
+          export default async function ({ execution_id }) {
+            const exe = await execution(execution_id);
+            const checkResult = await exe.result('check_prediction');
+            const violations = await checkResult.violations;
+            // Raise an event for each violation
+            violations.forEach(function (violation) {
+              eventsClient.createEvent({ 
+                body : {
+                  eventType: EventIngestEventType.ResourceContentionEvent,
+                  title: 'Predicted Disk Capacity Alarm',
+                  entitySelector: 'type(DISK),entityId("' + violation['dt.entity.disk'] + '")',
+                  properties: {
+                    'dt.entity.host' : violation['dt.entity.host']
+                  }
+                }
+              }); 
+            });  
+          };
+      position:
+        x: 0
+        y: 3
+      predecessors:
+        - check_prediction
+      conditions:
+        states:
+          check_prediction: OK
+        custom: "{{ result('check_prediction').violation }}"
+  description: ""
+  trigger:
+    schedule:
+      rule: null
+      trigger:
+        type: time
+        time: 08:00
+      timezone: Europe/Vienna
+      isActive: true
+      isFaulty: false
+      nextExecution: 2024-03-27T07:00:00.000Z
+      filterParameters: {}
+      inputs: {}
+  schemaVersion: 3
