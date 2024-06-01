@@ -1,0 +1,95 @@
+metadata:
+  version: "1"
+  dependencies:
+    apps:
+      - id: dynatrace.automations
+        version: ^1.571.1
+  inputs: []
+workflow:
+  title: Pull Energy Prices
+  tasks:
+    pull_energy_prices:
+      name: pull_energy_prices
+      description: Build a custom task running js Code
+      action: dynatrace.automations:run-javascript
+      input:
+        script: >-
+          // This action continously simulates metrics with variable seasonality
+
+          // 
+
+          import { coreClient } from '@dynatrace-sdk/client-core';
+
+          import { metricsClient } from
+          '@dynatrace-sdk/client-classic-environment-v2';
+
+          import { logsClient } from
+          "@dynatrace-sdk/client-classic-environment-v2";
+
+
+          const METRIC_NAME_PREFIX = "energy.price.mwh" 
+
+
+          export default async function({execution_id}) {      
+            const now = new Date();
+            const logs = [];
+
+            // Fetch the JSON data
+            fetch("https://api.awattar.at/v1/marketdata")
+              .then(response => {
+                // Check if the response is OK (status 200-299)
+                if (!response.ok) {
+                  throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json(); // Parse the JSON from the response
+              })
+              .then(data => {
+                // send log with predicted values for the next 24 hours
+                var csv = "";
+                for(let i=0; i < data['data'].length; i++) {
+                  csv = csv + data['data'][i]['start_timestamp'] + ';' + data['data'][i]['marketprice'] + ';'
+                }
+                logs.push({
+                      'content': 'energy price prediction: ' + csv,
+                      'loglevel' : 'INFO',
+                      'log.source': 'awattar',
+                      'log.tag': ['energy-predction' ],
+                    });
+                logsClient.storeLog({
+                  body: logs,
+                  type: 'application/json; charset=utf-8',
+                })
+                .then((response) => console.log(response))
+                .catch((e) => console.error(e));
+                // send metric
+                const c = {
+                  body : METRIC_NAME_PREFIX + " " + data['data'][0]['marketprice'] + "\n"
+                }
+                metricsClient.ingest(c).then(response => {
+                 
+                })
+              })
+              .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+              });
+          }
+      position:
+        x: 0
+        y: 1
+      predecessors: []
+  description: ""
+  trigger:
+    schedule:
+      rule: null
+      trigger:
+        type: cron
+        cron: 10 * * * *
+      timezone: Europe/Vienna
+      isActive: true
+      isFaulty: false
+      nextExecution: 2024-06-01T08:10:00.000Z
+      filterParameters:
+        earliestStart: 2023-07-10
+        earliestStartTime: 00:00
+      inputs: {}
+  schemaVersion: 3
