@@ -1,0 +1,102 @@
+metadata:
+  version: "1"
+  dependencies:
+    apps:
+      - id: dynatrace.automations
+        version: ^1.452.0
+  inputs: []
+workflow:
+  title: Data Pipeline Logs Simulator
+  tasks:
+    conveyor_line:
+      name: conveyor_line
+      description: Build a custom task running js Code
+      action: dynatrace.automations:run-javascript
+      input:
+        script: >-
+          // Simulates messages originating from a batch data import ETL
+          pipeline
+
+          const IMPORT_TABLE_NAMES = ['BILLING', 'CONSUMPTION', 'USAGE']
+
+          const IMPORT_TABLE_ROWS = [
+            { 'tenant' : 'k11111', 'job' : 'useast-job-1' },
+            { 'tenant' : 'k22222', 'job' : 'useast-job-1' }, 
+            { 'tenant' : 'k33333', 'job' : 'useast-job-1' }, 
+            { 'tenant' : 'k44444', 'job' : 'apac-job-2' }, 
+            { 'tenant' : 'k55555', 'job' : 'apac-job-2' }, 
+            { 'tenant' : 'k66666', 'job' : 'apac-job-3' }, 
+            { 'tenant' : 'k77777', 'job' : 'emea-job-1' }, 
+            { 'tenant' : 'k88888', 'job' : 'emea-job-2' }, 
+            { 'tenant' : 'k99999', 'job' : 'emea-job-3' }
+          ]
+
+
+          const EVENT_TEMPLATES = [
+            { 'probability' : 0.001, 'level' : 'ERROR', 'template' : 'Timestamp: {ts} | Event: Table import failure | Job: {job} | Severity: Error | Description: Job {job} failed to import row data for table {table} for tenant {tenant}.' },
+            { 'probability' : 0.99, 'level' : 'INFO', 'template' : 'Timestamp: {ts} | Event: Table row successfully imported | Job: {job} | Severity: Info | Description: Job {job} imported row data for table {table} for tenant {tenant}.' }
+          ]
+
+
+          import { logsClient } from
+          "@dynatrace-sdk/client-classic-environment-v2";
+
+
+          export default async function ({ execution_id }) {
+            const logs = [];
+            for(var table = 0; table < IMPORT_TABLE_NAMES.length; table++) {
+              for(var row = 0; row < IMPORT_TABLE_ROWS.length; row++) {
+                EVENT_TEMPLATES.forEach(function(template) {
+                  if(Math.random() < template.probability) {
+                    var time = new Date()
+                    const hour = time.getHours();
+                    // add an anomaly in data latency at the 8th hour of each day
+                    if(hour == 8 && IMPORT_TABLE_ROWS[row]['job'] == 'apac-job-2') {
+                      // Subtract 5 minutes to simulate a 5 minute lag on this single ETL worker
+                      time.setMinutes(time.getMinutes() - 5);  
+                    }
+                    const ts_now = time.toISOString();
+
+                    logs.push({
+                      'content': template.template.replaceAll('{ts}', ts_now).replaceAll('{table}', IMPORT_TABLE_NAMES[table]).replaceAll('{tenant}', IMPORT_TABLE_ROWS[row]['tenant']).replaceAll('{job}', IMPORT_TABLE_ROWS[row]['job']),
+                      'loglevel' : template.level,
+                      'log.source': '/var/log/syslog',
+                      'log.tag': ['table-' + IMPORT_TABLE_NAMES[table], 'tenant-' + IMPORT_TABLE_ROWS[row]['tenant'], 'job-' + IMPORT_TABLE_ROWS[row]['job'] ],
+                    });
+                  }
+                });
+              }
+            }
+            //console.log(logs);
+            
+            if(logs.length>0) {
+              logsClient.storeLog({
+                body: logs,
+                type: 'application/json; charset=utf-8',
+              })
+              .then((response) => console.log(response))
+              .catch((e) => console.error(e));
+            }
+
+            
+          }
+      position:
+        x: 0
+        y: 1
+      predecessors: []
+  description: ""
+  trigger:
+    schedule:
+      rule: null
+      trigger:
+        type: interval
+        intervalMinutes: 30
+      timezone: Europe/Vienna
+      isActive: true
+      isFaulty: false
+      nextExecution: 2024-04-30T09:30:00.000Z
+      filterParameters:
+        earliestStart: 2024-04-30T00:00:00.000Z
+        earliestStartTime: 00:00
+      inputs: {}
+  schemaVersion: 3
