@@ -1,0 +1,20 @@
+# HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET", endpoint="?PATH?"} ?REQUESTS_TOTAL_GET?
+http_requests_total{method="POST", endpoint="?PATH?"} ?REQUESTS_TOTAL_POST?
+
+# HELP http_request_duration_seconds Duration of HTTP requests in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="0.1"} ?DURATION_GET_BUCKET_1?
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="0.5"} ?DURATION_GET_BUCKET_2?
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="1.0"} ?DURATION_GET_BUCKET_3?
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="2.5"} ?DURATION_GET_BUCKET_4?
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="5.0"} ?DURATION_GET_BUCKET_5?
+http_request_duration_seconds_bucket{method="GET", endpoint="?PATH?", le="+Inf"} ?DURATION_GET_BUCKET_6?
+http_request_duration_seconds_sum{method="GET", endpoint="?PATH?"} ?DURATION_GET_SECONDS_SUM?
+http_request_duration_seconds_count{method="GET", endpoint="?PATH?"} ?REQUESTS_TOTAL_GET?
+
+# HELP http_errors_total Total number of HTTP errors
+# TYPE http_errors_total counter
+http_errors_total{method="GET", endpoint="?PATH?", code="500"} ?REQUESTS_TOTAL_GET_ERRORS_500?
+http_errors_total{method="POST", endpoint="?PATH?", code="400"} ?REQUESTS_TOTAL_POST_ERRORS_400?
