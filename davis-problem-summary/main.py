@@ -28,9 +28,13 @@ OAUTH_CLIENT_ID = os.environ.get("OAUTH_CLIENT_ID")
 OAUTH_ACCOUNT_ARN = os.environ.get("OAUTH_ACCOUNT_ARN")
 OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
 # Use-case endpoints
-CONVERSATION_ENDPOINT = "/platform/davis/copilot/v0.2/skills/conversations:message"
+DT_AI_CONVERSATION_SKILL = "/platform/davis/copilot/v0.2/skills/conversations:message"
+DT_AI_NL2DQL_SKILL = "/platform/davis/copilot/v0.2/skills/nl2dql:generate"
+
 STORAGE_SERVICE_ENDPOINT = "/platform/storage/query/v1/query:execute?enrich=metric-metadata"
-CONVERSATION_URL = f"https://{TENANT}.apps.dynatrace.com/{CONVERSATION_ENDPOINT}"
+CONVERSATION_URL = f"https://{TENANT}.apps.dynatrace.com/{DT_AI_CONVERSATION_SKILL}"
+NL2DQL_URL = f"https://{TENANT}.apps.dynatrace.com/{DT_AI_NL2DQL_SKILL}"
+
 # Necessary permission scopes for the use-case example
 PERMISSION_SCOPES = 'davis-copilot:conversations:execute davis-copilot:nl2dql:execute storage:logs:read storage:events:read storage:metrics:read storage:bucket-definitions:read storage:buckets:read'
 
@@ -52,8 +56,8 @@ def get_oauth_token():
         'Content-Type': 'application/x-www-form-urlencoded'
         })
     # Print the response from the server
-    print(response.status_code)
-    print(response.text)
+    # print(response.status_code)
+    # print(response.text)
     if response.status_code == 200:
         return response.json()['access_token']
     
@@ -98,9 +102,9 @@ def fetchProblem(token):
 
 def summarizeProblem(token, text):
     request={
-            "text": "Please summarize the Dynatrace detected problem",
+            "text": "Summarize the Dynatrace detected problem",
             "context": [
-                {"type": "document-retrieval", "value": "disabled"},
+                {"type": "document-retrieval", "value": "dynatrace"},
                 {"type": "supplementary", "value": text},
             ],
         }
@@ -118,23 +122,54 @@ def summarizeProblem(token, text):
         # process the response
         result = response.json()
         answer = result["text"]
-        print("*" * 80)
-        print(answer)
-        print("-" * 30)
         if sources := result["metadata"].get("sources"):
             print("The following sources were used:")
             print(json.dumps(sources, indent=4))
-        print("*" * 80)
+        return answer
     else:
+        print(response.content)
         print("Error", response)
 
+
+def generateDQL(token, question):
+    request={
+            "text": question,
+            "context": [
+                {"type": "document-retrieval", "value": "disabled"}
+            ],
+        }
+    # do the request
+    response = requests.post(
+        NL2DQL_URL,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        },
+        json=request,
+    )
+
+    if response.status_code == 200:
+        # process the response
+        result = response.json()
+        answer = result["dql"]
+        if sources := result["metadata"].get("sources"):
+            print("The following sources were used:")
+            print(json.dumps(sources, indent=4))
+        return answer
+    else:
+        print(response.content)
+        print("Error", response)
 
 def main():
     token = get_oauth_token()
     problems = fetchProblem(token)
     # Summarize a single problem description
-    summarizeProblem(token, problems[0]['event.description'])
-    
+    summary = summarizeProblem(token, problems[0]['event.description'])
+    print(summary)
+    dql = generateDQL(token, "Count number of problems in the last 24h")
+    print(dql)
+
+
 if __name__ == "__main__":
     main()
     
