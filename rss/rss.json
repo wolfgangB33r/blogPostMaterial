@@ -1,6 +1,6 @@
 {
   "feeds" : [
-    { "Name": "Engineering at Meta", "rss" : "https://engineering.fb.com/feed" },
-    { "Name": "OpenAI News", "rss" : "https://openai.com/news/rss.xml" }
+    { "name": "Engineering at Meta", "rss" : "https://engineering.fb.com/feed" },
+    { "name": "OpenAI News", "rss" : "https://openai.com/news/rss.xml" }
   ]
 }
