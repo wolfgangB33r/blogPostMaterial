@@ -1,0 +1,118 @@
+metadata:
+  version: "1"
+  dependencies:
+    apps:
+      - id: dynatrace.automations
+        version: ^1.2268.0
+  inputs: []
+workflow:
+  title: "Demo: Involve Your own AI Agent"
+  tasks:
+    create_pinned_notebook:
+      name: create_pinned_notebook
+      description: Run custom JavaScript code.
+      action: dynatrace.automations:run-javascript
+      input:
+        script: >-
+          /* Demo workflow action that automatically creates and attaches a
+          document (Notebook or Dashboard) 
+             to a detected problem.
+             */
+          import { documentsClient } from "@dynatrace-sdk/client-document";
+
+          import { credentialVaultClient } from
+          '@dynatrace-sdk/client-classic-environment-v2';
+
+          import { execution } from '@dynatrace-sdk/automation-utils';
+
+
+          function generateGUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+              const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+              return v.toString(16);
+            });
+          }
+
+
+          export default async function ({ execution_id }) {
+            const ex = await execution(execution_id);
+            const problem_event = ex.params.event;
+            var problem_id = problem_event['event.id'];
+            problem_id = problem_id.replace('_', '-'); // we need to replace the not allowed char
+            
+            // Create a new Notebook and pin it to the triggering problem
+            try {
+              const notebookContent = {
+                defaultTimeframe: { from: "now()-2h", to: "now()" },
+                defaultSegments: [],
+                sections: [
+                  {"id":"19ebed94-69a9-4a6e-b392-7bb7b0deb330","type":"markdown","markdown":"# Domain Analysis Results\n\nHere goes the external, domain-specific analysis results"}
+                ],
+              };
+
+              const generatedNotebook = await documentsClient.createDocument({
+                body: {
+                  name: "[TSG] Domain Analysis Results",
+                  type: "notebook",
+                  description: "A notebook containing domain specific analysis results",
+                  id: "problem-TSG-" + problem_id + "-" + generateGUID(),
+                  content: new Blob([JSON.stringify(notebookContent)], { type: "application/json" }),
+                },
+              });
+
+              // Make document public
+              const updated = await documentsClient.updateDocument({
+                  id: generatedNotebook.id,
+                  optimisticLockingVersion: generatedNotebook.version,
+                  body: {
+                    isPrivate: false,
+                  }
+              })
+              
+            } catch (error) {
+              console.error("Error creating notebook:", error);
+            }
+            return { };
+          }
+      position:
+        x: 0
+        y: 1
+      predecessors: []
+  description: This demo workflow is triggered by a problem and simulates the
+    reachout to an external agent to receive additional information that is then
+    attached to the problem with a troubleshooting document.
+  trigger:
+    eventTrigger:
+      filterQuery: event.kind == "DAVIS_PROBLEM" AND event.status == "ACTIVE" AND
+        (event.status_transition == "CREATED" OR event.status_transition ==
+        "UPDATED" OR event.status_transition == "REOPENED") AND (event.category
+        == "MONITORING_UNAVAILABLE" OR event.category == "AVAILABILITY" OR
+        event.category == "ERROR" OR event.category == "SLOWDOWN" OR
+        event.category == "RESOURCE_CONTENTION" OR event.category ==
+        "CUSTOM_ALERT" OR event.category == "INFO") AND (event.name == "Multiple
+        application problems")
+      isActive: true
+      uniqueExpression: '{{ event()["event.id"] }}-{{ "open" if
+        event()["event.status_transition"] in ("CREATED", "UPDATED", "REOPENED",
+        "REFRESHED") else "resolved" }}-{{
+        event()["dt.davis.last_reopen_timestamp"] }}'
+      triggerConfiguration:
+        type: davis-problem
+        value:
+          categories:
+            info: true
+            error: true
+            custom: true
+            resource: true
+            slowdown: true
+            availability: true
+            monitoringUnavailable: true
+          entityTags: {}
+          customFilter: event.name == "Multiple application problems"
+          onProblemClose: false
+          entityTagsMatch: all
+  schemaVersion: 3
+  result: null
+  input: {}
+  hourlyExecutionLimit: 1000
+  type: STANDARD
