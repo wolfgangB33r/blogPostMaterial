@@ -1,0 +1,83 @@
+metadata:
+  version: '1'
+  dependencies:
+    apps:
+    - id: dynatrace.automations
+      version: ^1.3183.0
+  inputs: []
+workflow:
+  title: Google Play App Rank Template
+  description: ''
+  schemaVersion: 4
+  trigger:
+    schedule:
+      isActive: true
+      trigger:
+        type: interval
+        intervalMinutes: 30
+      filterParameters:
+        earliestStart: '2025-04-09'
+        earliestStartTime: '11:16'
+      timezone: Europe/Vienna
+      inputs: {}
+  result: null
+  type: STANDARD
+  input: {}
+  hourlyExecutionLimit: 1000
+  guide: "# Google Play Store Ranking Workflow\n\n## Overview\n\nThis workflow periodically\
+    \ checks your application's ranking in Google Play Store search results for configured\
+    \ keywords and languages, then ingests the ranking into Dynatrace Grail as a custom\
+    \ metric.\n\n## Prerequisites\n\n- Dynatrace Workflows enabled\n- JavaScript Code\
+    \ task\n- Permission to ingest custom metrics\n\n## Configuration\n\nUpdate the\
+    \ following values in the script:\n\n```javascript\nconst APP_ID = \"<YOUR_APP_ID>\"\
+    ;\n\nconst KEYWORDS = [\n  \"keyword1\",\n  \"keyword2\"\n];\n\nconst LANGUAGES\
+    \ = [\n  \"en-US\",\n  \"de-DE\"\n];\n```\n\n## How it works\n\nFor each configured\
+    \ language and keyword, the workflow:\n\n1. Searches the Google Play Store.\n\
+    2. Finds the configured application.\n3. Determines its ranking.\n4. Ingests the\
+    \ result into Grail.\n\n## Metric\n\n**Metric name**\n\n```text\nbusiness.store.rank\n\
+    ```\n\n**Dimensions**\n\n- `appid`\n- `language`\n- `searchterm`\n\nExample:\n\
+    \n```text\nbusiness.store.rank,appid=com.example.app,language=\"en-US\",searchterm=\"\
+    fitness\" 3\n```\n\n## Example DQL\n\n```dql\ntimeseries avg(business.store.rank),\n\
+    by:{language, searchterm}\n```\n\n## Notes\n\n- Rankings are only ingested if\
+    \ the app appears in the search results.\n- Google Play search results may vary\
+    \ by region and can change over time.\n- Because this solution scrapes the Play\
+    \ Store website, changes to Google's HTML structure may require updates to the\
+    \ parser."
+  tasks:
+    fetch_number_and_store:
+      name: fetch_number_and_store
+      input:
+        script: "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\
+          import { coreClient } from '@dynatrace-sdk/client-core';\nimport { metricsClient\
+          \ } from '@dynatrace-sdk/client-classic-environment-v2';\n\nconst APP_ID\
+          \ = '<YOUR_APP_ID>'\n\nconst KEYWORDS = [\n    'game', \n    'your_keywords'\n\
+          \    ];\n\nconst LANGUAGES = [\n  'en-US', 'de-DE', 'es-MX', 'id-ID'\n];\n\
+          \nconst USERAGENT = \"Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36\
+          \ (KHTML, like Gecko) Chrome/90.0.4430.210 Mobile Safari/537.36\";\n\nasync\
+          \ function fetchRank(searchterm, language) {\n  var rank = -1;\n  // Fetch\
+          \ the html data\n  await fetch(\"https://play.google.com/store/search?q=\"\
+          \ + encodeURIComponent(searchterm) + \"&c=apps\", {\n    method: \"GET\"\
+          , \n    headers: {\n        \"User-Agent\": USERAGENT, \n        \"accept-language\"\
+          \ : language\n    }\n  })\n  .then(response => {\n      // Check if the\
+          \ response is OK (status 200-299)\n      if (!response.ok) {\n        throw\
+          \ new Error('Network response was not ok ' + response.statusText);\n   \
+          \   }\n      return response.text();\n    })\n    .then(async html_text\
+          \ => {\n      var seg = html_text.split('ULeU3b');\n\t  var c = 1;\n\t \
+          \ for(const s of seg) {\n\t    if(s.indexOf(APP_ID) > 0) {\n          rank\
+          \ = c - 2;\n          break;\n        }\n\t\tc = c + 1;\n      }\n    })\n\
+          \    .catch(error => {\n      console.error('There was a problem with the\
+          \ fetch operation:', error);\n    });\n  return rank;\n}\n\nexport default\
+          \ async function ({ executionId }) {\n  var metricStr = \"\";\n  for (const\
+          \ lang of LANGUAGES) {\n    for (const kw of KEYWORDS) {\n      var rank\
+          \ = await fetchRank(kw, lang);\n      if(rank > 0) {\n        metricStr\
+          \ += \"business.store.rank,appid=\" + APP_ID + \",language=\\\"\" + lang\
+          \ + \"\\\",searchterm=\\\"\" + kw + \"\\\" \" + rank + \"\\n\";\n      }\n\
+          \    }\n  }\n  const c = {\n    body : metricStr\n  }\n  const result =\
+          \ await metricsClient.ingest(c);\n  console.log(result);\n  return { };\n\
+          }"
+      action: dynatrace.automations:run-javascript
+      position:
+        x: 0
+        y: 1
+      description: Run custom JavaScript code.
+      predecessors: []
