@@ -1,0 +1,1476 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "1": {
+            "title": "Event Name Counts / Unique User",
+            "type": "data",
+            "query": "fetch user.events\n| filterOut isNull(name)\n| summarize count = countDistinct(dt.rum.instance.id), by:{name}\n| sort count desc",
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "valueAxis": [
+                            "count"
+                        ],
+                        "valueAxisLabel": "count",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name"
+                    },
+                    "circleChartSettings": {
+                        "valueType": "relative",
+                        "groupingThresholdType": "relative"
+                    }
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "3": {
+            "title": "PlayStore Rank by Language",
+            "type": "data",
+            "query": "timeseries rank=avg(business.store.rank, scalar:true), by:{language}\n| fieldsKeep language, rank",
+            "visualization": "table",
+            "visualizationSettings": {
+                "table": {
+                    "columnWidths": {
+                        "[\"language\"]": 73.0625
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "rank",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746198542513
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "componentState": {
+                    "selectedAnalyzerName": "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer",
+                    "inputData": {
+                        "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer": {
+                            "generalParameters": {
+                                "timeframe": {
+                                    "startTime": "2025-04-25T12:04:00.758Z",
+                                    "endTime": "2025-05-02T12:04:00.758Z"
+                                },
+                                "resolveDimensionalQueryData": true,
+                                "logVerbosity": "INFO"
+                            },
+                            "tolerance": 1.5,
+                            "alertCondition": "OUTSIDE",
+                            "alertOnMissingData": false,
+                            "violatingSamples": 3,
+                            "slidingWindow": 5,
+                            "dealertingSamples": 5,
+                            "query": "timeseries rank=avg(business.store.rank), by:{language}"
+                        }
+                    }
+                },
+                "davisVisualization": {
+                    "isAvailable": true,
+                    "settings": {
+                        "visibleSections": "VISUALIZATION"
+                    }
+                }
+            },
+            "timeframe": {
+                "tileTimeframe": {
+                    "from": "now()-2h",
+                    "to": "now()"
+                },
+                "tileTimeframeEnabled": false
+            }
+        },
+        "4": {
+            "title": "PlayStore Rank, by Search Term",
+            "type": "data",
+            "query": "timeseries rank=avg(business.store.rank, scalar:true), by:{searchterm}\n| fieldsKeep searchterm, rank",
+            "visualization": "table",
+            "visualizationSettings": {
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "componentState": {
+                    "selectedAnalyzerName": "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer",
+                    "inputData": {
+                        "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer": {
+                            "generalParameters": {
+                                "timeframe": {
+                                    "startTime": "2025-04-25T12:04:00.759Z",
+                                    "endTime": "2025-05-02T12:04:00.759Z"
+                                },
+                                "resolveDimensionalQueryData": true,
+                                "logVerbosity": "INFO"
+                            },
+                            "tolerance": 1.5,
+                            "alertCondition": "OUTSIDE",
+                            "alertOnMissingData": false,
+                            "violatingSamples": 3,
+                            "slidingWindow": 5,
+                            "dealertingSamples": 5,
+                            "query": "timeseries rank=avg(business.store.rank), by:{searchterm}"
+                        }
+                    }
+                },
+                "davisVisualization": {
+                    "isAvailable": true,
+                    "selectedOutputs": [
+                        "-390028856",
+                        "1114551381",
+                        "177599162",
+                        "-998467991",
+                        "458640916",
+                        "-857695904",
+                        "-149637787"
+                    ],
+                    "settings": {
+                        "visibleSections": "VISUALIZATION"
+                    }
+                }
+            },
+            "timeframe": {
+                "tileTimeframe": {
+                    "from": "now()-2h",
+                    "to": "now()"
+                },
+                "tileTimeframeEnabled": false
+            }
+        },
+        "6": {
+            "title": "User count",
+            "type": "data",
+            "query": "fetch user.events\n| summarize userCount = countDistinctExact(dt.rum.instance.id), by:{}",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "userCount",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "userCount",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframe": {
+                    "from": "now()-24h",
+                    "to": "now()"
+                },
+                "tileTimeframeEnabled": false
+            }
+        },
+        "7": {
+            "title": "User count / OS Versions",
+            "type": "data",
+            "query": "fetch user.events\n| summarize count = countDistinct(dt.rum.instance.id), by:{os.version}",
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "valueAxis": [
+                            "count"
+                        ],
+                        "valueAxisLabel": "count",
+                        "categoryAxis": [
+                            "os.version"
+                        ],
+                        "categoryAxisLabel": "os.version"
+                    },
+                    "circleChartSettings": {
+                        "valueType": "relative",
+                        "groupingThresholdType": "relative"
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "field": "DT.name",
+                            "comparator": "= *value*",
+                            "value": "",
+                            "type": "string",
+                            "colorMode": "color-palette",
+                            "colorPalette": "swamps"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "9": {
+            "title": "User count / App Versions last 7days",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries countDistinctExact(dt.rum.instance.id), by:{app.version}, interval:1h",
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "dataMapping": {
+                    "displayedFields": [
+                        "app.version"
+                    ]
+                },
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "position": "bottom",
+                        "hidden": true
+                    },
+                    "xAxisLabel": "timeframe",
+                    "xAxisScaling": "analyzedTimeframe",
+                    "seriesOverrides": [
+                        {
+                            "seriesId": [
+                                "234"
+                            ],
+                            "override": {
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                }
+                            }
+                        }
+                    ],
+                    "fieldMapping": {
+                        "leftAxisValues": [
+                            "countDistinctExact(dt.rum.instance.id)"
+                        ],
+                        "timestamp": "timeframe"
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "field": "DT.name",
+                            "comparator": "= *value*",
+                            "value": "",
+                            "type": "string",
+                            "colorMode": "color-palette",
+                            "colorPalette": "blue-steel"
+                        },
+                        {
+                            "colorMode": "custom-color",
+                            "type": "string",
+                            "field": "DT.name",
+                            "comparator": "=",
+                            "customColor": {
+                                "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                            },
+                            "value": "234"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-7d",
+                    "to": "now()"
+                }
+            }
+        },
+        "10": {
+            "title": "User count / Phone Vendor (Top 10)",
+            "type": "data",
+            "query": "fetch user.events\n| summarize count = countDistinct(dt.rum.instance.id), by:{device.manufacturer}\n| sort count desc\n| limit 10",
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "valueAxis": [
+                            "count"
+                        ],
+                        "valueAxisLabel": "count",
+                        "categoryAxis": [
+                            "device.manufacturer"
+                        ],
+                        "categoryAxisLabel": "device.manufacturer"
+                    },
+                    "circleChartSettings": {
+                        "valueType": "relative",
+                        "groupingThresholdType": "relative"
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "field": "DT.name",
+                            "comparator": "= *value*",
+                            "value": "",
+                            "type": "string",
+                            "colorMode": "color-palette",
+                            "colorPalette": "security-risk-level"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "12": {
+            "title": "HTTP Request / Domain / Status",
+            "type": "data",
+            "query": "fetch user.events\n| filterOut isNull(url.domain)\n| summarize count = count(), by:{url.domain, http.response.status_code}\n| sort count desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "13": {
+            "title": "Crashed Users",
+            "type": "data",
+            "query": "fetch user.events\n| filter error.is_fatal == true\n| filter dt.rum.application.entity == \"MOBILE_APPLICATION-7F12FDD27DFB40A2\"\n| summarize count=countDistinct(dt.rum.instance.id), by:{}",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "count",
+                    "recordField": "count",
+                    "isIconVisible": true,
+                    "prefixIcon": "CriticalIcon",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "value": 0,
+                            "comparator": ">",
+                            "field": "count",
+                            "colorMode": "custom-color",
+                            "customColor": {
+                                "Default": "var(--dt-colors-charts-status-warning-default, #eca440)"
+                            }
+                        },
+                        {
+                            "value": 5,
+                            "comparator": "≥",
+                            "field": "count",
+                            "colorMode": "custom-color",
+                            "customColor": {
+                                "Default": "var(--dt-colors-charts-status-critical-default, #c4233b)"
+                            }
+                        },
+                        {
+                            "value": 0,
+                            "comparator": "=",
+                            "field": "count",
+                            "colorMode": "custom-color",
+                            "customColor": {
+                                "Default": "var(--dt-colors-charts-status-ideal-default, #2f6863)"
+                            }
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "22": {
+            "title": "",
+            "type": "data",
+            "query": "fetch user.events\n| summarize count = count(), by:{view.name}\n| sort count desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "table": {
+                    "sortBy": [
+                        {
+                            "columnId": "[\"view.name\"]",
+                            "direction": "ascending"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "23": {
+            "title": "Users",
+            "type": "data",
+            "query": "fetch user.events\n| summarize countDistinctExact(dt.rum.instance.id), by:{geo.country.iso_code}",
+            "visualization": "choropleth",
+            "visualizationSettings": {
+                "dataMapping": {
+                    "countryCode": "geo.country.iso_code",
+                    "dimension": "countDistinctExact(dt.rum.instance.id)",
+                    "displayedFields": [
+                        "countDistinctExact(dt.rum.instance.id)"
+                    ]
+                },
+                "legend": {
+                    "textTruncationMode": "middle"
+                },
+                "mapView": {
+                    "defaultZoom": "world"
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "24": {
+            "title": "User count / View (Top 20)",
+            "type": "data",
+            "query": "fetch user.events\n| filterOut isNull(view.name)\n| summarize count = countDistinct(dt.rum.instance.id), by:{view.name}\n| sort count desc\n| limit 10",
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "valueAxis": [
+                            "count"
+                        ],
+                        "valueAxisLabel": "count",
+                        "categoryAxis": [
+                            "view.name"
+                        ],
+                        "categoryAxisLabel": "view.name"
+                    },
+                    "circleChartSettings": {
+                        "valueType": "relative",
+                        "groupingThresholdType": "relative"
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "field": "DT.name",
+                            "comparator": "= *value*",
+                            "value": "",
+                            "type": "string",
+                            "colorMode": "color-palette",
+                            "colorPalette": "purple-rain"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "25": {
+            "title": "DAU",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries count=countDistinctExact(dt.rum.instance.id), by:{}, interval:24h\n| fieldsAdd DAU = arrayAvg(count)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "DAU",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "sparklineSettings": {
+                        "record": "countDistinctExact(dt.rum.instance.id)"
+                    },
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "DAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "26": {
+            "title": "WAU",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries count=countDistinctExact(dt.rum.instance.id), by:{}, interval:7d\n| fieldsAdd WAU = arrayAvg(count)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "WAU",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "sparklineSettings": {
+                        "record": "countDistinctExact(dt.rum.instance.id)"
+                    },
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "WAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "27": {
+            "title": "MAU",
+            "type": "data",
+            "query": "fetch user.events\n| summarize MAU = countDistinctExact(dt.rum.instance.id)\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "MAU",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "sparklineSettings": {
+                        "record": "countDistinctExact(dt.rum.instance.id)"
+                    },
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "MAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "28": {
+            "title": "DAU/WAU Ratio",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries DAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:24h\n| fieldsAdd j=1, DAU = arrayAvg(DAU_a)\n| join [\n  fetch user.events\n  | makeTimeseries WAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:7d\n  | fieldsAdd j=1, WAU = arrayAvg(WAU_a)\n], on:{j}, prefix:\"w.\"\n| join [\n  fetch user.events\n  | summarize MAU = countDistinctExact(dt.rum.instance.id)\n  | fieldsAdd j=1\n], on:{j}, prefix:\"m.\"\n| fieldsKeep DAU, w.WAU, m.MAU\n| fieldsRename WAU = w.WAU, MAU = m.MAU\n| fieldsAdd d_w_ratio=DAU/WAU*100, w_m_ratio=WAU/MAU*100\n\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "table": {
+                    "monospacedFontEnabled": true,
+                    "rowDensity": "comfortable",
+                    "columnWidths": {
+                        "[\"DAU\"]": 98.875,
+                        "[\"d_w_ratio\"]": 98.25
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "DAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    },
+                    {
+                        "identifier": "WAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746081539408
+                    },
+                    {
+                        "identifier": "MAU",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746081558229
+                    },
+                    {
+                        "identifier": "d_w_ratio",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746081571720
+                    },
+                    {
+                        "identifier": "w_m_ratio",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746081586800
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "29": {
+            "title": "DAU/WAU",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries DAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:24h\n| fieldsAdd j=1, DAU = arrayAvg(DAU_a)\n| join [\n  fetch user.events\n  | makeTimeseries WAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:7d\n  | fieldsAdd j=1, WAU = arrayAvg(WAU_a)\n], on:{j}, prefix:\"w.\"\n| join [\n  fetch user.events\n  | summarize MAU = countDistinctExact(dt.rum.instance.id)\n  | fieldsAdd j=1\n], on:{j}, prefix:\"m.\"\n| fieldsKeep DAU, w.WAU, m.MAU\n| fieldsRename WAU = w.WAU, MAU = m.MAU\n| fieldsAdd d_w_ratio=DAU/WAU*100, w_m_ratio=WAU/MAU*100\n\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "d_w_ratio",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "sparklineSettings": {
+                        "record": "countDistinctExact(dt.rum.instance.id)"
+                    },
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "d_w_ratio",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "30": {
+            "title": "WAU/MAU",
+            "type": "data",
+            "query": "fetch user.events\n| makeTimeseries DAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:24h\n| fieldsAdd j=1, DAU = arrayAvg(DAU_a)\n| join [\n  fetch user.events\n  | makeTimeseries WAU_a=countDistinctExact(dt.rum.instance.id), by:{}, interval:7d\n  | fieldsAdd j=1, WAU = arrayAvg(WAU_a)\n], on:{j}, prefix:\"w.\"\n| join [\n  fetch user.events\n  | summarize MAU = countDistinctExact(dt.rum.instance.id)\n  | fieldsAdd j=1\n], on:{j}, prefix:\"m.\"\n| fieldsKeep DAU, w.WAU, m.MAU\n| fieldsRename WAU = w.WAU, MAU = m.MAU\n| fieldsAdd d_w_ratio=DAU/WAU*100, w_m_ratio=WAU/MAU*100\n\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "userCount",
+                    "recordField": "w_m_ratio",
+                    "isIconVisible": true,
+                    "prefixIcon": "AccountFilledIcon",
+                    "sparklineSettings": {
+                        "record": "countDistinctExact(dt.rum.instance.id)"
+                    },
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "w_m_ratio",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1744367778040
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "timeframe": {
+                "tileTimeframeEnabled": true,
+                "tileTimeframe": {
+                    "from": "now()-30d",
+                    "to": "now()"
+                }
+            }
+        },
+        "31": {
+            "title": "New Users",
+            "type": "data",
+            "query": "fetch user.events\n| summarize count = count(), by:{dt.rum.instance.id}\n| join [ \n  fetch user.events, from:-30d, to:-24h\n  | summarize count = count(), by:{dt.rum.instance.id}\n  ], on:{dt.rum.instance.id}\n| summarize countOld=count()\n| fieldsAdd j=1\n| join [\n  fetch user.events\n  | summarize countAll = countDistinctExact(dt.rum.instance.id)\n  | fieldsAdd j=1\n], on:{j}\n| fieldsAdd newCount=right.countAll-countOld",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "countOld",
+                    "recordField": "newCount",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "newCount",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746093701608
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "32": {
+            "title": "User count / Geo (Top 20)",
+            "type": "data",
+            "query": "fetch user.events\n| filterOut isNull(geo.country.iso_code)\n| summarize count = countDistinct(dt.rum.instance.id), by:{geo.country.iso_code}\n| sort count desc\n| limit 20",
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "valueAxis": [
+                            "count"
+                        ],
+                        "valueAxisLabel": "count",
+                        "categoryAxis": [
+                            "geo.country.iso_code"
+                        ],
+                        "categoryAxisLabel": "geo.country.iso_code"
+                    },
+                    "circleChartSettings": {
+                        "valueType": "relative",
+                        "groupingThresholdType": "relative"
+                    }
+                },
+                "coloring": {
+                    "colorRules": [
+                        {
+                            "field": "DT.name",
+                            "comparator": "= *value*",
+                            "value": "",
+                            "type": "string",
+                            "colorMode": "color-palette",
+                            "colorPalette": "purple-rain"
+                        }
+                    ]
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "33": {
+            "title": "PlayStore Rank, by Search Term",
+            "type": "data",
+            "query": "timeseries rank=avg(business.store.rank), by:{searchterm}",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "truncationMode": "middle",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "business.store.rank",
+                        "isLabelVisible": true
+                    },
+                    "xAxisLabel": "timeframe",
+                    "xAxisScaling": "analyzedTimeframe",
+                    "fieldMapping": {
+                        "leftAxisValues": [
+                            "rank"
+                        ],
+                        "timestamp": "timeframe"
+                    },
+                    "gapPolicy": "connect"
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "componentState": {
+                    "selectedAnalyzerName": "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer",
+                    "inputData": {
+                        "dt.statistics.ui.anomaly_detection.SeasonalBaselineAnomalyDetectionAnalyzer": {
+                            "generalParameters": {
+                                "timeframe": {
+                                    "startTime": "2025-04-25T12:04:00.759Z",
+                                    "endTime": "2025-05-02T12:04:00.759Z"
+                                },
+                                "resolveDimensionalQueryData": true,
+                                "logVerbosity": "INFO"
+                            },
+                            "tolerance": 1.5,
+                            "alertCondition": "OUTSIDE",
+                            "alertOnMissingData": false,
+                            "violatingSamples": 3,
+                            "slidingWindow": 5,
+                            "dealertingSamples": 5,
+                            "query": "timeseries rank=avg(business.store.rank), by:{searchterm}"
+                        }
+                    }
+                },
+                "davisVisualization": {
+                    "isAvailable": true,
+                    "selectedOutputs": [
+                        "-390028856",
+                        "1114551381",
+                        "177599162",
+                        "-998467991",
+                        "458640916",
+                        "-857695904",
+                        "-149637787"
+                    ],
+                    "settings": {
+                        "visibleSections": "VISUALIZATION"
+                    }
+                }
+            },
+            "timeframe": {
+                "tileTimeframe": {
+                    "from": "now()-2h",
+                    "to": "now()"
+                },
+                "tileTimeframeEnabled": false
+            }
+        },
+        "34": {
+            "title": "Fatal errors",
+            "type": "data",
+            "query": "fetch user.events\n| filter error.is_fatal == true\n| filter dt.rum.application.entity == \"MOBILE_APPLICATION-7F12FDD27DFB40A2\"\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "table": {
+                    "columnOrder": [
+                        "[\"exception.message\"]",
+                        "[\"start_time\"]",
+                        "[\"time_correction.offset\"]",
+                        "[\"dt.rum.agent.version\"]",
+                        "[\"dt.retain.size\"]",
+                        "[\"dt.rum.session.id\"]",
+                        "[\"app.short_version\"]",
+                        "[\"error.name\"]",
+                        "[\"os.name\"]",
+                        "[\"error.is_fatal\"]",
+                        "[\"app.bundle\"]",
+                        "[\"device.screen.height\"]",
+                        "[\"geo.country.iso_code\"]",
+                        "[\"dt.rum.user_type\"]",
+                        "[\"frontend.name\"]",
+                        "[\"dt.rum.instance.id\"]",
+                        "[\"dt.openpipeline.pipelines\"]",
+                        "[\"characteristics.has_error\"]",
+                        "[\"device.model.identifier\"]",
+                        "[\"os.version\"]",
+                        "[\"error.type\"]",
+                        "[\"id\"]",
+                        "[\"device.battery.level\"]",
+                        "[\"device.orientation\"]",
+                        "[\"dt.openpipeline.source\"]",
+                        "[\"dt.rum.application.id\"]",
+                        "[\"dt.rum.application.entity\"]",
+                        "[\"dt.rum.agent.type\"]",
+                        "[\"duration\"]",
+                        "[\"characteristics.classifier\"]",
+                        "[\"error.display_name\"]",
+                        "[\"exception.stack_trace\"]",
+                        "[\"end_time\"]",
+                        "[\"client.isp\"]",
+                        "[\"dt.rum.received_timestamp\"]",
+                        "[\"error.id\"]",
+                        "[\"characteristics.has_anr\"]",
+                        "[\"device.screen.width\"]",
+                        "[\"device.is_rooted\"]",
+                        "[\"app.version\"]",
+                        "[\"device.manufacturer\"]",
+                        "[\"time_correction.is_applied\"]",
+                        "[\"dt.rum.schema_version\"]",
+                        "[\"client_start_time\"]"
+                    ],
+                    "sortBy": [
+                        {
+                            "columnId": "[\"view.name\"]",
+                            "direction": "ascending"
+                        }
+                    ],
+                    "columnWidths": {
+                        "[\"exception.message\"]": 1105
+                    }
+                },
+                "autoSelectVisualization": false
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "35": {
+            "title": "Purchase",
+            "type": "data",
+            "query": "fetch user.events\n| filter event_properties.name == \"tabshop.Purchase acknowledged!\"\n| summarize count=countDistinctExact(dt.rum.instance.id), by:{}",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "singleValue": {
+                    "labelMode": "none",
+                    "label": "countOld",
+                    "recordField": "count",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "newCount",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "cascade": null,
+                        "added": 1746093701608
+                    }
+                ]
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "38": {
+            "title": "Webpage",
+            "type": "data",
+            "query": "fetch user.events\n| filter dt.rum.application.entity == \"APPLICATION-46D96A25EFA26AC6\"\n| makeTimeseries count=countDistinctExact(dt.rum.instance.id), interval:24h",
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "chartSettings": {
+                    "legend": {
+                        "hidden": true
+                    }
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "1": {
+            "x": 19,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "3": {
+            "x": 3,
+            "y": 7,
+            "w": 4,
+            "h": 5
+        },
+        "4": {
+            "x": 0,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "6": {
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "7": {
+            "x": 10,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "9": {
+            "x": 6,
+            "y": 2,
+            "w": 16,
+            "h": 5
+        },
+        "10": {
+            "x": 13,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "12": {
+            "x": 0,
+            "y": 38,
+            "w": 8,
+            "h": 7
+        },
+        "13": {
+            "x": 2,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "22": {
+            "x": 0,
+            "y": 28,
+            "w": 8,
+            "h": 7
+        },
+        "23": {
+            "x": 0,
+            "y": 12,
+            "w": 16,
+            "h": 9
+        },
+        "24": {
+            "x": 16,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "25": {
+            "x": 6,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "26": {
+            "x": 8,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "27": {
+            "x": 10,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "28": {
+            "x": 0,
+            "y": 35,
+            "w": 8,
+            "h": 3
+        },
+        "29": {
+            "x": 12,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "30": {
+            "x": 14,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "31": {
+            "x": 4,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "32": {
+            "x": 7,
+            "y": 7,
+            "w": 3,
+            "h": 5
+        },
+        "33": {
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 5
+        },
+        "34": {
+            "x": 0,
+            "y": 21,
+            "w": 19,
+            "h": 7
+        },
+        "35": {
+            "x": 16,
+            "y": 0,
+            "w": 2,
+            "h": 2
+        },
+        "38": {
+            "x": 16,
+            "y": 12,
+            "w": 6,
+            "h": 9
+        }
+    },
+    "importedWithCode": false,
+    "settings": {},
+    "annotations": []
+}
